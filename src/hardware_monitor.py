@@ -95,10 +95,12 @@ class HardwareMonitor:
             return {"error": str(e)}
     
     def get_all_stats(self) -> Dict[str, Any]:
-        """Return all hardware stats in one dict."""
-        return {
-            "temperatures": self.get_temperatures(),
-            "battery": self.get_battery_status(),
-            "containers": self.get_container_stats(),
-            "zram": self.get_zram_stats(),
-        }
+        """Return all hardware stats in one dict. Uses parallel execution for better performance."""
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = {
+                "temperatures": executor.submit(self.get_temperatures),
+                "battery": executor.submit(self.get_battery_status),
+                "containers": executor.submit(self.get_container_stats),
+                "zram": executor.submit(self.get_zram_stats),
+            }
+            return {key: future.result() for key, future in futures.items()}

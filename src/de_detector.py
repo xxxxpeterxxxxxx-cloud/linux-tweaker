@@ -78,7 +78,34 @@ class DEDetector:
         )
 
     def _detect_by_process(self) -> Optional[DEInfo]:
-        """Detect DE/WM by looking at running processes."""
+        """Detect DE/WM by looking at running processes. Uses pgrep for faster detection."""
+        # Try pgrep first (faster than ps aux on systems with many processes)
+        try:
+            result = subprocess.run(
+                ["pgrep", "-l", "-x", "gnome-shell", "plasmashell", "Hyprland", "sway", "xfce4-session", "i3"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0:
+                proc = result.stdout.lower()
+                if "gnome-shell" in proc:
+                    return DEInfo(name="GNOME", type="DE", engine="GnomeThemeEngine", detected_by="process")
+                if "plasmashell" in proc:
+                    return DEInfo(name="KDE", type="DE", engine="PlasmaThemeEngine", detected_by="process")
+                if "hyprland" in proc:
+                    return DEInfo(name="Hyprland", type="WM", engine="HyprlandThemeEngine", detected_by="process")
+                if "sway" in proc:
+                    return DEInfo(name="sway", type="WM", engine="SwayThemeEngine", detected_by="process")
+                if "xfce4-session" in proc:
+                    return DEInfo(name="XFCE", type="DE", engine="XfceThemeEngine", detected_by="process")
+                if "i3" in proc:
+                    return DEInfo(name="i3", type="WM", engine="I3ThemeEngine", detected_by="process")
+        except (subprocess.SubprocessError, OSError, FileNotFoundError):
+            # Fallback to ps aux if pgrep is not available
+            pass
+
+        # Fallback to ps aux (slower but more portable)
         try:
             result = subprocess.run(
                 ["ps", "aux"],

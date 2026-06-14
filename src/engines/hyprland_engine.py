@@ -746,9 +746,10 @@ exec-once = swww init || true
         script = dotfiles.get("install_script", "")
         if script:
             sp = clone_dir / script
-            if sp.exists() and not sp.stat().st_mode & 0o111:
-                sp.chmod(sp.stat().st_mode | 0o755)
             if sp.exists():
+                stat_mode = sp.stat().st_mode
+                if not stat_mode & 0o111:
+                    sp.chmod(stat_mode | 0o755)
                 print(f"  -> Running install script: {script}")
                 subprocess.run([str(sp)], capture_output=True, text=True, check=False, cwd=str(clone_dir))
         print("  -> Dotfiles applied!")

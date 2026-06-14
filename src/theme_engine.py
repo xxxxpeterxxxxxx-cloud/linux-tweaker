@@ -135,9 +135,19 @@ class ThemeEngine(ABC):
         try:
             if archive.suffix == ".zip" or str(archive).endswith(".shell-extension.zip"):
                 with zipfile.ZipFile(archive, "r") as z:
+                    # Check for path traversal attacks (zip bomb)
+                    for member in z.namelist():
+                        if ".." in member or member.startswith("/"):
+                            print(f"[ThemeEngine] Unsafe path in archive: {member}")
+                            return None
                     z.extractall(dest_dir)
             elif ".tar." in archive.name or archive.suffix in (".tar", ".gz", ".xz"):
                 with tarfile.open(archive, "r:*") as t:
+                    # Check for path traversal attacks
+                    for member in t.getmembers():
+                        if ".." in member.name or member.name.startswith("/"):
+                            print(f"[ThemeEngine] Unsafe path in archive: {member.name}")
+                            return None
                     t.extractall(dest_dir)
             else:
                 return None
