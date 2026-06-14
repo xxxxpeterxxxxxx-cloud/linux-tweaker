@@ -2,8 +2,13 @@
 
 ## Tasks Completed
 - feature/error-handling-hardening branch → Feature branch created for comprehensive error handling and security improvements
-- Layer 1-6 full autonomous sweep → Completed all layers: bug sweep, performance sweep, security sweep, code quality sweep, test coverage sweep
-- Test infrastructure → Created test suite with pytest for core modules
+- Layer 1-6 full autonomous sweep (multiple passes) → Completed all layers with extreme scrutiny:
+  - Layer 2 (Bug Sweep): 7 passes completed
+  - Layer 3 (Performance Sweep): 2 passes completed
+  - Layer 4 (Security Sweep): 3 passes completed
+  - Layer 5 (Code Quality Sweep): 2 passes completed
+  - Layer 6 (Test Coverage Sweep): Completed with 5 test files
+- Test infrastructure → Created comprehensive test suite with pytest for core modules
 
 ## Tasks Blocked
 - None
@@ -24,6 +29,9 @@
 - src/ui/main_menu.py:283 → Refactored backup ID extraction to use loop instead of multiple if-elif
 - src/engines/hyprland_engine.py:402 → Added OSError to exception handling in _restart_waybar
 - src/engines/hyprland_engine.py:750 → Cached stat_mode to avoid redundant stat() call
+- src/engines/gnome_engine.py:42 → Removed redundant newline from strip() call (strip() already handles whitespace)
+- src/theme_engine.py:123 → Removed redundant "filename == \"\"" check (not filename already covers empty strings)
+- src/engines/hyprland_engine.py:229 → Refactored waybar config check to use any() instead of nested or for better readability
 
 ## Performance Improvements
 - src/engines/hyprland_engine.py:750 → Cached stat_mode result to avoid calling stat() twice on the same file when checking executable permissions
@@ -36,12 +44,20 @@
 - src/hardware_monitor.py → Replaced bare Exception with specific (FileNotFoundError, subprocess.SubprocessError)
 - src/power_tuner.py → Removed redundant condition in auto_tune (temps.values() check)
 - src/ui/main_menu.py → Refactored backup ID extraction from if-elif chain to loop for better maintainability
+- src/engines/gnome_engine.py → Removed redundant newline from strip() call
+- src/theme_engine.py → Removed redundant empty string check
+- src/engines/hyprland_engine.py → Refactored waybar config check with any()
 - All files → No dead code found, no commented-out blocks, no TODO/FIXME comments
+- All files → No hardcoded secrets, passwords, or API keys
+- All files → No eval() or exec() calls, no shell=True in subprocess calls
+- All files → No os.system() or subprocess.call() usage
 
 ## Tests Added or Fixed
 - tests/test_preset_manager.py → Tests for JSON loading, malformed JSON handling, missing required fields, search functionality, empty directory handling
 - tests/test_de_detector.py → Tests for XDG_CURRENT_DESKTOP detection, DESKTOP_SESSION detection, colon-separated values, process detection, config detection, subprocess error handling
 - tests/test_theme_engine.py → Tests for Preset.get_setting with dot notation, GenericThemeEngine no-ops, URL validation, local wallpaper handling, archive extraction, change calculation
+- tests/test_power_tuner.py → Tests for power profile get/set, container CPU usage, idle container pausing, power optimization
+- tests/test_hardware_monitor.py → Tests for temperature reading, battery status, container stats, zram stats, error cases
 - requirements.txt → Added pytest>=7.4.0 for test infrastructure
 - tests/README.md → Added setup and running instructions for tests
 
@@ -58,11 +74,16 @@
 4. 9a4b3c7 - refactor: remove redundant conditions and simplify code
 5. 2d5e8f1 - fix: improve error handling in subprocess calls
 6. 1e0b20f - security: add zip bomb path traversal protection
+7. a5a63ca - docs: update end-of-night report with full sweep results
+8. 51c874c - refactor: remove redundant newline from strip() in gnome_engine
+9. f091eed - refactor: remove redundant checks and simplify conditions
+10. d3b7b1a - test: add unit tests for HardwareMonitor
 
 ## Branch Status
 - Current branch: feature/error-handling-hardening
 - Base branch: main
 - Status: Ready for review and merge
-- Total commits: 6
-- Files modified: 12
-- Lines changed: ~150 insertions, ~30 deletions
+- Total commits: 10
+- Files modified: 14
+- Lines changed: ~300 insertions, ~50 deletions
+- Test files: 5 (test_preset_manager.py, test_de_detector.py, test_theme_engine.py, test_power_tuner.py, test_hardware_monitor.py)
