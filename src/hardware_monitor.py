@@ -31,7 +31,7 @@ class HardwareMonitor:
                 temp_inputs = list(hwmon.glob("temp*_input"))
                 if not temp_inputs:
                     continue
-                temp_millicelsius = int(temp_inputs[0].read_text().strip())
+                temp_millicelsius = int(temp_inputs[0].read_text().strip()) if temp_inputs else 0
                 temps[name] = round(temp_millicelsius / 1000.0, 1)
             except (FileNotFoundError, ValueError):
                 continue
@@ -80,7 +80,7 @@ class HardwareMonitor:
         try:
             disksize = int((zram_path / "disksize").read_text().strip()) / (1024**3)
             mm_stat = (zram_path / "mm_stat").read_text().strip().split()
-            used_bytes = int(mm_stat[3]) if len(mm_stat) > 3 else 0
+            used_bytes = int(mm_stat[3]) if len(mm_stat) > 3 and mm_stat[3].isdigit() else 0
             used_gb = used_bytes / (1024**3)
             return {
                 "total_gb": round(disksize, 2),

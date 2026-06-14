@@ -23,7 +23,7 @@ class PresetManager:
                 Path.cwd() / "presets",
                 Path(__file__).parent.parent.parent / "presets",
             ]
-            self.preset_dir = next((p for p in candidates if p.exists()), candidates[0])
+            self.preset_dir = next((p for p in candidates if p.exists()), candidates[0] if candidates else Path.cwd() / "presets")
 
         self.presets: Dict[str, Preset] = {}
         self._load_presets()

@@ -112,7 +112,10 @@ class ThemeEngine(ABC):
         if not url or url.startswith("/"):
             local = Path(url) if url else None
             return local if local and local.exists() else None
-        filename = url.split("/")[-1].split("?")[0] or "wallpaper"
+        parts = url.split("/")
+        filename = parts[-1].split("?")[0] if parts else "wallpaper"
+        if not filename or filename == "":
+            filename = "wallpaper"
         if not filename.endswith((".jpg", ".jpeg", ".png", ".webp")):
             filename += ".jpg"
         dest = dest_dir / filename
@@ -147,7 +150,8 @@ class ThemeEngine(ABC):
         font_dir.mkdir(parents=True, exist_ok=True)
         installed = 0
         for url in font_urls:
-            filename = url.split("/")[-1].split("?")[0]
+            parts = url.split("/")
+            filename = parts[-1].split("?")[0] if parts else ""
             if not filename:
                 continue
             dest = dest_dir / filename

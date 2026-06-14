@@ -59,7 +59,7 @@ class PowerTuner:
     def pause_idle_containers(self, temp_threshold: float = 80.0, cpu_threshold: float = 5.0):
         """Pause idle podman containers when overheating."""
         temps = self.monitor.get_temperatures()
-        if not any(t > temp_threshold for t in temps.values()):
+        if not temps or not any(t > temp_threshold for t in temps.values()):
             return
         print(f"[PowerTuner] Overheat detected: {temps}")
         for container in self.monitor.get_container_stats():
@@ -78,7 +78,7 @@ class PowerTuner:
 
         if status == "discharging" and capacity < 20:
             self.set_power_profile("power-saver")
-        elif status == "charging" and temps and max(temps.values()) < 70:
+        elif status == "charging" and temps and temps.values() and max(temps.values()) < 70:
             self.set_power_profile("performance")
         else:
             self.set_power_profile("balanced")
