@@ -5,6 +5,7 @@ Read-only monitoring of temperatures, battery, and containers.
 
 import json
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Dict, List, Any
 

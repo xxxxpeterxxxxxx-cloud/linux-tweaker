@@ -399,7 +399,7 @@ tooltip label {{ color: {fg}; }}
         self._run(["pkill", "waybar"], check=False)
         try:
             subprocess.Popen(["waybar"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
-        except FileNotFoundError:
+        except (FileNotFoundError, OSError):
             pass
 
     def _apply_rofi_theme(self, theme: str, url: str = "", theme_config: dict = None):
