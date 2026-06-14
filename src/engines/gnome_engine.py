@@ -39,7 +39,7 @@ class GnomeThemeEngine(ThemeEngine):
     def _gget(self, schema: str, key: str) -> str:
         try:
             r = self._run(["gsettings", "get", schema, key], check=True)
-            return r.stdout.strip().strip("'\"\n")
+            return r.stdout.strip().strip("'\"")
         except (subprocess.SubprocessError, FileNotFoundError, OSError):
             return "unknown"
 
@@ -93,8 +93,12 @@ class GnomeThemeEngine(ThemeEngine):
             return False
         ext_dir.mkdir(parents=True, exist_ok=True)
         try:
-            import zipfile
             with zipfile.ZipFile(archive, "r") as z:
+                # Check for path traversal attacks
+                for member in z.namelist():
+                    if ".." in member or member.startswith("/"):
+                        print(f"  -> Unsafe path in extension archive: {member}")
+                        return False
                 z.extractall(ext_dir)
             print(f"  -> Extension installed: {uuid}")
             self._enable_extension(uuid)

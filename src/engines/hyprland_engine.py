@@ -6,6 +6,7 @@ Manages dotfiles in ~/.config/ for wayland and X11 tiling WMs.
 import json
 import shutil
 import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -757,7 +758,6 @@ exec-once = swww init || true
         return True
 
     def apply_preset(self, preset: Preset) -> bool:
-        import sys
         print(f"[{self.wm.title()}] Ricing with preset '{preset.name}' ...", flush=True)
         sys.stdout.flush()
         backup_id = self.backup_current()
@@ -795,19 +795,7 @@ exec-once = swww init || true
             cursor = preset.themes.get("cursor")
             cursor_url = resources.get("cursor-url", "")
             if cursor and cursor_url:
-                dest = self.icons_dir / cursor
-                if not dest.exists():
-                    archive = self.backup_dir / f"cursor_{cursor}.zip"
-                    if self._download_file(cursor_url, archive):
-                        extracted = self._extract_archive(archive, self.backup_dir / f"cursor_{cursor}_tmp")
-                        if extracted and extracted != dest:
-                            if dest.exists():
-                                shutil.rmtree(dest)
-                            try:
-                                shutil.move(str(extracted), str(dest))
-                            except (shutil.Error, OSError) as e:
-                                print(f"[{self.wm.title()}] Failed to move cursor theme: {e}")
-                            print(f"  -> Cursor theme installed: {cursor}")
+                self._install_cursor_theme(cursor, cursor_url)
 
             # 5. Apply Hyprland theme (borders, gaps, rounding, etc.)
             if hyprland_theme:
