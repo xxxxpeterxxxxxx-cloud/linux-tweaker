@@ -120,7 +120,7 @@ class ThemeEngine(ABC):
             return local if local and local.exists() else None
         parts = url.split("/")
         filename = parts[-1].split("?")[0] if parts else "wallpaper"
-        if not filename or filename == "":
+        if not filename:
             filename = "wallpaper"
         if not filename.endswith((".jpg", ".jpeg", ".png", ".webp")):
             filename += ".jpg"

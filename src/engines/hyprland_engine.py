@@ -226,7 +226,7 @@ class HyprlandThemeEngine(ThemeEngine):
         waybar_dir.mkdir(parents=True, exist_ok=True)
         
         # If dotfiles already provided waybar configs, skip generation
-        if self._dotfiles_applied and (waybar_dir / "style.css").exists() and ((waybar_dir / "config").exists() or (waybar_dir / "config.jsonc").exists()):
+        if self._dotfiles_applied and (waybar_dir / "style.css").exists() and any((waybar_dir / f).exists() for f in ("config", "config.jsonc")):
             print("  -> Waybar config from dotfiles preserved")
             self._restart_waybar()
             return
