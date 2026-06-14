@@ -233,29 +233,38 @@ class HyprlandThemeEngine(ThemeEngine):
         
         if url:
             archive = self.backup_dir / f"waybar_{style}.zip"
+            tmp_dir = self.backup_dir / f"waybar_{style}_tmp"
             if self._download_file(url, archive):
-                extracted = self._extract_archive(archive, self.backup_dir / f"waybar_{style}_tmp")
+                extracted = self._extract_archive(archive, tmp_dir)
                 if extracted:
-                    css_file = None
-                    if (extracted / "style.css").exists():
-                        css_file = extracted / "style.css"
-                    else:
-                        for f in extracted.rglob("style.css"):
-                            css_file = f
-                            break
-                    if css_file:
-                        shutil.copy2(css_file, waybar_dir / "style.css")
-                        for cfg_name in ("config", "config.jsonc"):
-                            cfg_src = extracted / cfg_name
-                            if cfg_src.exists():
-                                shutil.copy2(cfg_src, waybar_dir / cfg_name)
+                    try:
+                        css_file = None
+                        if (extracted / "style.css").exists():
+                            css_file = extracted / "style.css"
+                        else:
+                            for f in extracted.rglob("style.css"):
+                                css_file = f
                                 break
-                            for found in extracted.rglob(cfg_name):
-                                shutil.copy2(found, waybar_dir / cfg_name)
-                                break
-                        print(f"  -> Waybar style downloaded: {style}")
-                        self._restart_waybar()
-                        return
+                        if css_file:
+                            shutil.copy2(css_file, waybar_dir / "style.css")
+                            for cfg_name in ("config", "config.jsonc"):
+                                cfg_src = extracted / cfg_name
+                                if cfg_src.exists():
+                                    shutil.copy2(cfg_src, waybar_dir / cfg_name)
+                                    break
+                                for found in extracted.rglob(cfg_name):
+                                    shutil.copy2(found, waybar_dir / cfg_name)
+                                    break
+                            print(f"  -> Waybar style downloaded: {style}")
+                            self._restart_waybar()
+                            return
+                    finally:
+                        # Clean up temporary directory
+                        if tmp_dir.exists():
+                            try:
+                                shutil.rmtree(tmp_dir)
+                            except (shutil.Error, OSError):
+                                pass
         
         # Extract colors
         accent = "#89b4fa"
@@ -415,14 +424,23 @@ tooltip label {{ color: {fg}; }}
         
         if url:
             archive = self.backup_dir / f"rofi_{theme}.zip"
+            tmp_dir = self.backup_dir / f"rofi_{theme}_tmp"
             if self._download_file(url, archive):
-                extracted = self._extract_archive(archive, self.backup_dir / f"rofi_{theme}_tmp")
+                extracted = self._extract_archive(archive, tmp_dir)
                 if extracted:
-                    rasi_files = list(extracted.rglob("*.rasi"))
-                    if rasi_files:
-                        shutil.copy2(rasi_files[0], rofi_cfg)
-                        print(f"  -> Rofi theme downloaded: {theme}")
-                        return
+                    try:
+                        rasi_files = list(extracted.rglob("*.rasi"))
+                        if rasi_files:
+                            shutil.copy2(rasi_files[0], rofi_cfg)
+                            print(f"  -> Rofi theme downloaded: {theme}")
+                            return
+                    finally:
+                        # Clean up temporary directory
+                        if tmp_dir.exists():
+                            try:
+                                shutil.rmtree(tmp_dir)
+                            except (shutil.Error, OSError):
+                                pass
         
         accent = "#89b4fa"
         bg = "#1e1e2e"

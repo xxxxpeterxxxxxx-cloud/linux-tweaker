@@ -3,7 +3,6 @@ Theme Engine Base Classes
 Abstract base classes for modular desktop theming engines.
 """
 
-import json
 import shutil
 import subprocess
 import tarfile
@@ -217,19 +216,28 @@ class ThemeEngine(ABC):
         archive = self.backup_dir / f"{asset_type}_{name}.zip"
         if not self._download_file(url, archive):
             return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"{asset_type}_{name}_tmp")
+        tmp_dir = self.backup_dir / f"{asset_type}_{name}_tmp"
+        extracted = self._extract_archive(archive, tmp_dir)
         if not extracted:
             return False
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            try:
-                shutil.move(str(extracted), str(dest))
-            except (shutil.Error, OSError) as e:
-                print(f"[ThemeEngine] Failed to move {asset_type}: {e}")
-                return False
-        print(f"  -> {asset_type.capitalize()} installed: {name}")
-        return True
+        try:
+            if extracted != dest:
+                if dest.exists():
+                    shutil.rmtree(dest)
+                try:
+                    shutil.move(str(extracted), str(dest))
+                except (shutil.Error, OSError) as e:
+                    print(f"[ThemeEngine] Failed to move {asset_type}: {e}")
+                    return False
+            print(f"  -> {asset_type.capitalize()} installed: {name}")
+            return True
+        finally:
+            # Clean up temporary directory
+            if tmp_dir.exists():
+                try:
+                    shutil.rmtree(tmp_dir)
+                except (shutil.Error, OSError):
+                    pass
 
 
 class GenericThemeEngine(ThemeEngine):
