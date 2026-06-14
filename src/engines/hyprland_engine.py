@@ -764,10 +764,13 @@ exec-once = swww init || true
                     bp.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(dp, bp)
             if dp.exists():
-                if dp.is_dir():
-                    shutil.rmtree(dp)
-                else:
-                    dp.unlink()
+                try:
+                    if dp.is_dir():
+                        shutil.rmtree(dp)
+                    else:
+                        dp.unlink()
+                except Exception as e:
+                    print(f"[{self.wm.title()}] Failed to remove {dp}: {e}")
             if sp.is_dir():
                 shutil.copytree(sp, dp)
             else:
@@ -833,7 +836,10 @@ exec-once = swww init || true
                         if extracted and extracted != dest:
                             if dest.exists():
                                 shutil.rmtree(dest)
-                            shutil.move(str(extracted), str(dest))
+                            try:
+                                shutil.move(str(extracted), str(dest))
+                            except Exception as e:
+                                print(f"[{self.wm.title()}] Failed to move cursor theme: {e}")
                             print(f"  -> Cursor theme installed: {cursor}")
 
             # 5. Apply Hyprland theme (borders, gaps, rounding, etc.)
@@ -1021,8 +1027,11 @@ exec-once = swww init || true
             ]
             for p in paths:
                 if p.exists():
-                    shutil.copy2(p, sub / p.name)
-                    p.unlink()
+                    try:
+                        shutil.copy2(p, sub / p.name)
+                        p.unlink()
+                    except Exception as e:
+                        print(f"[Hyprland] Failed to backup {p.name}: {e}")
             (self.config_dir / "hypr").mkdir(parents=True, exist_ok=True)
             clean_conf = self.config_dir / "hypr" / "hyprland.conf"
             clean_conf.write_text("monitor=,preferred,auto,auto\ngeneral {\n    gaps_in = 5\n    gaps_out = 10\n    border_size = 2\n}\n")
@@ -1037,8 +1046,11 @@ exec-once = swww init || true
             ]
             for p in paths:
                 if p.exists():
-                    shutil.copy2(p, sub / p.name)
-                    p.unlink()
+                    try:
+                        shutil.copy2(p, sub / p.name)
+                        p.unlink()
+                    except Exception as e:
+                        print(f"[Sway] Failed to backup {p.name}: {e}")
             (self.config_dir / "sway").mkdir(parents=True, exist_ok=True)
             clean_conf = self.config_dir / "sway" / "config"
             clean_conf.write_text("# Default Sway config\noutput * bg #1a1a1a solid_color\n")
@@ -1052,8 +1064,11 @@ exec-once = swww init || true
             ]
             for p in paths:
                 if p.exists():
-                    shutil.copy2(p, sub / p.name)
-                    p.unlink()
+                    try:
+                        shutil.copy2(p, sub / p.name)
+                        p.unlink()
+                    except Exception as e:
+                        print(f"[i3] Failed to backup {p.name}: {e}")
             (self.config_dir / "i3").mkdir(parents=True, exist_ok=True)
             clean_conf = self.config_dir / "i3" / "config"
             clean_conf.write_text("# Default i3 config\n")

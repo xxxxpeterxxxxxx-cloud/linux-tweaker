@@ -86,7 +86,11 @@ class GnomeThemeEngine(ThemeEngine):
         if extracted != dest:
             if dest.exists():
                 shutil.rmtree(dest)
-            shutil.move(str(extracted), str(dest))
+            try:
+                shutil.move(str(extracted), str(dest))
+            except Exception as e:
+                print(f"[GNOME] Failed to move theme: {e}")
+                return False
         print(f"  -> Theme installed: {name}")
         return True
 
@@ -107,7 +111,11 @@ class GnomeThemeEngine(ThemeEngine):
         if extracted != dest:
             if dest.exists():
                 shutil.rmtree(dest)
-            shutil.move(str(extracted), str(dest))
+            try:
+                shutil.move(str(extracted), str(dest))
+            except Exception as e:
+                print(f"[GNOME] Failed to move icon theme: {e}")
+                return False
         print(f"  -> Icon theme installed: {name}")
         return True
 
@@ -128,7 +136,11 @@ class GnomeThemeEngine(ThemeEngine):
         if extracted != dest:
             if dest.exists():
                 shutil.rmtree(dest)
-            shutil.move(str(extracted), str(dest))
+            try:
+                shutil.move(str(extracted), str(dest))
+            except Exception as e:
+                print(f"[GNOME] Failed to move shell theme: {e}")
+                return False
         print(f"  -> Shell theme installed: {name}")
         return True
 
@@ -340,6 +352,10 @@ class GnomeThemeEngine(ThemeEngine):
             return False
         try:
             data = json.loads(path.read_text())
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"[GNOME] Failed to parse backup file: {e}")
+            return False
+        try:
             for key, value in data.items():
                 if key == "enabled-extensions":
                     self._gset(self.SCHEMA_SHELL, key, value)

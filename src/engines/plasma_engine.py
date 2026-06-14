@@ -43,7 +43,11 @@ class PlasmaThemeEngine(ThemeEngine):
         if extracted != dest:
             if dest.exists():
                 shutil.rmtree(dest)
-            shutil.move(str(extracted), str(dest))
+            try:
+                shutil.move(str(extracted), str(dest))
+            except Exception as e:
+                print(f"[Plasma] Failed to move theme: {e}")
+                return False
         print(f"  -> Theme installed: {name}")
         return True
 
@@ -63,7 +67,11 @@ class PlasmaThemeEngine(ThemeEngine):
         if extracted != dest:
             if dest.exists():
                 shutil.rmtree(dest)
-            shutil.move(str(extracted), str(dest))
+            try:
+                shutil.move(str(extracted), str(dest))
+            except Exception as e:
+                print(f"[Plasma] Failed to move icon theme: {e}")
+                return False
         print(f"  -> Icon theme installed: {name}")
         return True
 
@@ -83,7 +91,11 @@ class PlasmaThemeEngine(ThemeEngine):
         if extracted != dest:
             if dest.exists():
                 shutil.rmtree(dest)
-            shutil.move(str(extracted), str(dest))
+            try:
+                shutil.move(str(extracted), str(dest))
+            except Exception as e:
+                print(f"[Plasma] Failed to move cursor theme: {e}")
+                return False
         print(f"  -> Cursor theme installed: {name}")
         return True
 
@@ -299,6 +311,10 @@ class PlasmaThemeEngine(ThemeEngine):
             return False
         try:
             data = json.loads(path.read_text())
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"[Plasma] Failed to parse backup file: {e}")
+            return False
+        try:
             self._kwrite(self.CFG_KDEGLOBALS, "General", "ColorScheme", data.get("color_scheme", ""))
             self._kwrite(self.CFG_PLASMARC, "Theme", "name", data.get("plasma_theme", ""))
             self._kwrite(self.CFG_KDEGLOBALS, "General", "Name", data.get("gtk_theme", ""))

@@ -44,7 +44,11 @@ class PresetManager:
         print(f"[PresetManager] {len(self.presets)} preset(s) loaded from {self.preset_dir}")
 
     def _load_preset_file(self, path: Path) -> Optional[Preset]:
-        data = json.loads(path.read_text())
+        try:
+            data = json.loads(path.read_text())
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"[PresetManager] Failed to parse {path.name}: {e}")
+            return None
         return Preset(
             name=data["name"],
             description=data.get("description", ""),

@@ -67,7 +67,10 @@ class HardwareMonitor:
             )
             if result.returncode != 0:
                 return []
-            return json.loads(result.stdout)
+            try:
+                return json.loads(result.stdout)
+            except json.JSONDecodeError:
+                return []
         except Exception:
             return []
     
