@@ -65,44 +65,10 @@ class HyprlandThemeEngine(ThemeEngine):
         return self.config_dir / "i3" / "config"
 
     def _install_theme(self, name: str, url: str) -> bool:
-        if not url:
-            return False
-        dest = self.themes_dir / name
-        if dest.exists():
-            print(f"  -> Theme '{name}' already installed")
-            return True
-        archive = self.backup_dir / f"hypr_theme_{name}.zip"
-        if not self._download_file(url, archive):
-            return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"hypr_theme_{name}_tmp")
-        if not extracted:
-            return False
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            shutil.move(str(extracted), str(dest))
-        print(f"  -> Theme installed: {name}")
-        return True
+        return self._install_theme_asset(name, url, self.themes_dir, "hypr_theme")
 
     def _install_icon_theme(self, name: str, url: str) -> bool:
-        if not url:
-            return False
-        dest = self.icons_dir / name
-        if dest.exists():
-            print(f"  -> Icon theme '{name}' already installed")
-            return True
-        archive = self.backup_dir / f"hypr_icons_{name}.zip"
-        if not self._download_file(url, archive):
-            return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"hypr_icons_{name}_tmp")
-        if not extracted:
-            return False
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            shutil.move(str(extracted), str(dest))
-        print(f"  -> Icon theme installed: {name}")
-        return True
+        return self._install_theme_asset(name, url, self.icons_dir, "hypr_icons")
 
     def _replace_line(self, path: Path, key: str, new_value: str):
         """Replace a key=value line in Hyprland config. Handles block syntax like general:border_size."""
@@ -769,7 +735,7 @@ exec-once = swww init || true
                         shutil.rmtree(dp)
                     else:
                         dp.unlink()
-                except Exception as e:
+                except (shutil.Error, OSError) as e:
                     print(f"[{self.wm.title()}] Failed to remove {dp}: {e}")
             if sp.is_dir():
                 shutil.copytree(sp, dp)
@@ -838,7 +804,7 @@ exec-once = swww init || true
                                 shutil.rmtree(dest)
                             try:
                                 shutil.move(str(extracted), str(dest))
-                            except Exception as e:
+                            except (shutil.Error, OSError) as e:
                                 print(f"[{self.wm.title()}] Failed to move cursor theme: {e}")
                             print(f"  -> Cursor theme installed: {cursor}")
 
@@ -993,7 +959,7 @@ exec-once = swww init || true
                 except FileNotFoundError:
                     pass
             return True
-        except Exception as e:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
             print(f"[{self.wm.title()}] Restore failed: {e}")
             return False
 
@@ -1030,7 +996,7 @@ exec-once = swww init || true
                     try:
                         shutil.copy2(p, sub / p.name)
                         p.unlink()
-                    except Exception as e:
+                    except (shutil.Error, OSError) as e:
                         print(f"[Hyprland] Failed to backup {p.name}: {e}")
             (self.config_dir / "hypr").mkdir(parents=True, exist_ok=True)
             clean_conf = self.config_dir / "hypr" / "hyprland.conf"
@@ -1049,7 +1015,7 @@ exec-once = swww init || true
                     try:
                         shutil.copy2(p, sub / p.name)
                         p.unlink()
-                    except Exception as e:
+                    except (shutil.Error, OSError) as e:
                         print(f"[Sway] Failed to backup {p.name}: {e}")
             (self.config_dir / "sway").mkdir(parents=True, exist_ok=True)
             clean_conf = self.config_dir / "sway" / "config"
@@ -1067,7 +1033,7 @@ exec-once = swww init || true
                     try:
                         shutil.copy2(p, sub / p.name)
                         p.unlink()
-                    except Exception as e:
+                    except (shutil.Error, OSError) as e:
                         print(f"[i3] Failed to backup {p.name}: {e}")
             (self.config_dir / "i3").mkdir(parents=True, exist_ok=True)
             clean_conf = self.config_dir / "i3" / "config"

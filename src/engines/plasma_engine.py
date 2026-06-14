@@ -28,76 +28,13 @@ class PlasmaThemeEngine(ThemeEngine):
         self._check_dependencies()
 
     def _install_theme(self, name: str, url: str) -> bool:
-        if not url:
-            return False
-        dest = self.themes_dir / name
-        if dest.exists():
-            print(f"  -> Theme '{name}' already installed")
-            return True
-        archive = self.backup_dir / f"plasma_theme_{name}.zip"
-        if not self._download_file(url, archive):
-            return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"plasma_theme_{name}_tmp")
-        if not extracted:
-            return False
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            try:
-                shutil.move(str(extracted), str(dest))
-            except Exception as e:
-                print(f"[Plasma] Failed to move theme: {e}")
-                return False
-        print(f"  -> Theme installed: {name}")
-        return True
+        return self._install_theme_asset(name, url, self.themes_dir, "plasma_theme")
 
     def _install_icon_theme(self, name: str, url: str) -> bool:
-        if not url:
-            return False
-        dest = self.icons_dir / name
-        if dest.exists():
-            print(f"  -> Icon theme '{name}' already installed")
-            return True
-        archive = self.backup_dir / f"plasma_icons_{name}.zip"
-        if not self._download_file(url, archive):
-            return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"plasma_icons_{name}_tmp")
-        if not extracted:
-            return False
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            try:
-                shutil.move(str(extracted), str(dest))
-            except Exception as e:
-                print(f"[Plasma] Failed to move icon theme: {e}")
-                return False
-        print(f"  -> Icon theme installed: {name}")
-        return True
+        return self._install_theme_asset(name, url, self.icons_dir, "plasma_icons")
 
     def _install_cursor_theme(self, name: str, url: str) -> bool:
-        if not url:
-            return False
-        dest = self.icons_dir / name
-        if dest.exists():
-            print(f"  -> Cursor theme '{name}' already installed")
-            return True
-        archive = self.backup_dir / f"plasma_cursor_{name}.zip"
-        if not self._download_file(url, archive):
-            return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"plasma_cursor_{name}_tmp")
-        if not extracted:
-            return False
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            try:
-                shutil.move(str(extracted), str(dest))
-            except Exception as e:
-                print(f"[Plasma] Failed to move cursor theme: {e}")
-                return False
-        print(f"  -> Cursor theme installed: {name}")
-        return True
+        return self._install_theme_asset(name, url, self.icons_dir, "plasma_cursor")
 
     def _check_dependencies(self):
         """Check if required KDE tools are installed. Warn if missing."""
@@ -133,7 +70,7 @@ class PlasmaThemeEngine(ThemeEngine):
                 return True
             except FileNotFoundError:
                 continue
-            except Exception as e:
+            except (subprocess.SubprocessError, OSError) as e:
                 print(f"[Plasma] Failed to write {key}: {e}")
                 return False
         print("[Plasma] kwriteconfig not found — is KDE installed?")
@@ -159,7 +96,7 @@ class PlasmaThemeEngine(ThemeEngine):
                 return True
             except FileNotFoundError:
                 continue
-            except Exception:
+            except (subprocess.SubprocessError, OSError):
                 continue
         return False
 
@@ -323,7 +260,7 @@ class PlasmaThemeEngine(ThemeEngine):
             self._kwrite(self.CFG_KDEGLOBALS, "General", "font", data.get("font", ""))
             print(f"[Plasma] Backup {backup_id} restored")
             return True
-        except Exception as e:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
             print(f"[Plasma] Restore failed: {e}")
             return False
 

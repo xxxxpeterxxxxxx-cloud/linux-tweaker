@@ -38,7 +38,7 @@ class PresetManager:
                 preset = self._load_preset_file(preset_file)
                 if preset:
                     self.presets[preset.name.lower()] = preset
-            except Exception as e:
+            except (json.JSONDecodeError, KeyError, TypeError, OSError) as e:
                 print(f"[PresetManager] Error loading {preset_file.name}: {e}")
 
         print(f"[PresetManager] {len(self.presets)} preset(s) loaded from {self.preset_dir}")

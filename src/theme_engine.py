@@ -196,6 +196,31 @@ class ThemeEngine(ABC):
             self._run(["fc-cache", "-f"], check=False)
         return installed
 
+    def _install_theme_asset(self, name: str, url: str, dest_dir: Path, asset_type: str = "theme") -> bool:
+        """Generic method to install theme assets (themes, icons, cursors)."""
+        if not url:
+            return False
+        dest = dest_dir / name
+        if dest.exists():
+            print(f"  -> {asset_type.capitalize()} '{name}' already installed")
+            return True
+        archive = self.backup_dir / f"{asset_type}_{name}.zip"
+        if not self._download_file(url, archive):
+            return False
+        extracted = self._extract_archive(archive, self.backup_dir / f"{asset_type}_{name}_tmp")
+        if not extracted:
+            return False
+        if extracted != dest:
+            if dest.exists():
+                shutil.rmtree(dest)
+            try:
+                shutil.move(str(extracted), str(dest))
+            except (shutil.Error, OSError) as e:
+                print(f"[ThemeEngine] Failed to move {asset_type}: {e}")
+                return False
+        print(f"  -> {asset_type.capitalize()} installed: {name}")
+        return True
+
 
 class GenericThemeEngine(ThemeEngine):
     """Fallback engine for unknown DEs/Wms — preview-only, no changes."""

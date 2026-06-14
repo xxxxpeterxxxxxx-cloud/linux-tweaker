@@ -54,7 +54,7 @@ class GnomeThemeEngine(ThemeEngine):
                     value = value.lower()
             self._run(["gsettings", "set", schema, key, str(value)], check=True)
             return True
-        except Exception as e:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
             print(f"[GNOME] Failed to set {key}: {e}")
             return False
 
@@ -70,79 +70,15 @@ class GnomeThemeEngine(ThemeEngine):
 
     def _install_theme(self, name: str, url: str) -> bool:
         """Download and extract a GTK theme to ~/.themes/."""
-        if not url:
-            return False
-        if (self.themes_dir / name).exists():
-            print(f"  -> Theme '{name}' already installed")
-            return True
-        archive = self.backup_dir / f"theme_{name}.zip"
-        if not self._download_file(url, archive):
-            return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"theme_{name}_tmp")
-        if not extracted:
-            return False
-        # The extracted folder might be named anything; rename to theme name
-        dest = self.themes_dir / name
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            try:
-                shutil.move(str(extracted), str(dest))
-            except Exception as e:
-                print(f"[GNOME] Failed to move theme: {e}")
-                return False
-        print(f"  -> Theme installed: {name}")
-        return True
+        return self._install_theme_asset(name, url, self.themes_dir, "theme")
 
     def _install_icon_theme(self, name: str, url: str) -> bool:
         """Download and extract an icon theme to ~/.icons/."""
-        if not url:
-            return False
-        if (self.icons_dir / name).exists():
-            print(f"  -> Icon theme '{name}' already installed")
-            return True
-        archive = self.backup_dir / f"icons_{name}.zip"
-        if not self._download_file(url, archive):
-            return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"icons_{name}_tmp")
-        if not extracted:
-            return False
-        dest = self.icons_dir / name
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            try:
-                shutil.move(str(extracted), str(dest))
-            except Exception as e:
-                print(f"[GNOME] Failed to move icon theme: {e}")
-                return False
-        print(f"  -> Icon theme installed: {name}")
-        return True
+        return self._install_theme_asset(name, url, self.icons_dir, "icons")
 
     def _install_shell_theme(self, name: str, url: str) -> bool:
         """Download and install a GNOME Shell theme. Requires User Themes extension."""
-        if not url:
-            return False
-        dest = self.themes_dir / name
-        if dest.exists():
-            print(f"  -> Shell theme '{name}' already installed")
-            return True
-        archive = self.backup_dir / f"shell_{name}.zip"
-        if not self._download_file(url, archive):
-            return False
-        extracted = self._extract_archive(archive, self.backup_dir / f"shell_{name}_tmp")
-        if not extracted:
-            return False
-        if extracted != dest:
-            if dest.exists():
-                shutil.rmtree(dest)
-            try:
-                shutil.move(str(extracted), str(dest))
-            except Exception as e:
-                print(f"[GNOME] Failed to move shell theme: {e}")
-                return False
-        print(f"  -> Shell theme installed: {name}")
-        return True
+        return self._install_theme_asset(name, url, self.themes_dir, "shell")
 
     def _install_extension(self, uuid: str, url: str) -> bool:
         """Download and install a GNOME Shell extension zip to ~/.local/share/gnome-shell/extensions/."""
@@ -163,7 +99,7 @@ class GnomeThemeEngine(ThemeEngine):
             print(f"  -> Extension installed: {uuid}")
             self._enable_extension(uuid)
             return True
-        except Exception as e:
+        except (zipfile.BadZipFile, OSError) as e:
             print(f"  -> Failed to extract extension {uuid}: {e}")
             return False
 
@@ -176,7 +112,7 @@ class GnomeThemeEngine(ThemeEngine):
                 enabled.append(uuid)
                 self._gset(self.SCHEMA_SHELL, "enabled-extensions", str(enabled).replace("'", '"'))
                 print(f"  -> Extension enabled: {uuid}")
-        except Exception as e:
+        except (json.JSONDecodeError, subprocess.SubprocessError, OSError) as e:
             print(f"  -> Could not enable {uuid}: {e}")
 
     def _set_shell_theme(self, name: str):
@@ -238,7 +174,7 @@ class GnomeThemeEngine(ThemeEngine):
                     for skey, sval in info["settings"].items():
                         try:
                             self._gset(ext_schema, skey, str(sval))
-                        except Exception as e:
+                        except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
                             print(f"  -> Skipped {skey} for {uuid}: {e}")
 
         # 7. Configure layout (dock, panel, etc.)
@@ -366,7 +302,7 @@ class GnomeThemeEngine(ThemeEngine):
                     self._gset(schema, key, value)
             print(f"[GNOME] Backup {backup_id} restored")
             return True
-        except Exception as e:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
             print(f"[GNOME] Restore failed: {e}")
             return False
 
