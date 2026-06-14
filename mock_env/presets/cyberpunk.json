@@ -1,0 +1,26 @@
+{
+  "name": "Cyberpunk",
+  "description": "Neon colors, dark theme, futuristic fonts",
+  "themes": {
+    "gtk": "Catppuccin-Mocha-Blue",
+    "icon": "Tela-circle-dracula",
+    "cursor": "Bibata-Modern-Ice",
+    "font": "JetBrains Mono Nerd Font"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/wq/wallhaven-wqve6r.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Catppuccin-Mocha-Blue",
+      "icon-theme": "Tela-circle-dracula",
+      "font-name": "JetBrains Mono 11"
+    },
+    "kde": {
+      "plasma-theme": "Catppuccin-Mocha-Blue",
+      "icon-theme": "Tela-circle-dracula"
+    },
+    "hyprland": {
+      "waybar-style": "cyberpunk",
+      "rofi-theme": "cyberpunk"
+    }
+  }
+}

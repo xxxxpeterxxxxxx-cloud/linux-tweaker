@@ -1,0 +1,24 @@
+{
+  "name": "HyDE Dots",
+  "description": "Successor to hyprdots. Aesthetic, dynamic and minimal. Includes themepatcher, waybar, rofi, and swww.",
+  "themes": {"gtk":"Adwaita","icon":"Adwaita","cursor":"Adwaita","font":"JetBrainsMono 11"},
+  "wallpaper": "",
+  "settings": {
+    "hyprland": {
+      "dotfiles": {
+        "repo": "https://github.com/HyDE-Project/HyDE",
+        "branch": "main",
+        "dependencies": ["hyprland","waybar","rofi","swww","dunst","kitty","python","grimblast"],
+        "config_paths": {
+          "Configs/.config/hypr": "~/.config/hypr",
+          "Configs/.config/waybar": "~/.config/waybar",
+          "Configs/.config/rofi": "~/.config/rofi",
+          "Configs/.config/dunst": "~/.config/dunst",
+          "Configs/.config/kitty": "~/.config/kitty",
+          "Configs/.config/swww": "~/.config/swww"
+        },
+        "install_script": "Scripts/hydevm/hydevm.sh"
+      }
+    }
+  }
+}

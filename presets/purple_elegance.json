@@ -1,0 +1,63 @@
+{
+  "name": "Purple Elegance",
+  "description": "Rich purple GNOME theme with Orchis glass panels, calculator, weather widgets, and smooth animations.",
+  "themes": {
+    "gtk": "Orchis-Purple-Dark",
+    "icon": "Tela-circle-purple",
+    "cursor": "Bibata-Modern-Classic",
+    "font": "Inter 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/49/wallhaven-495g6x.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Orchis-Purple-Dark",
+      "icon-theme": "Tela-circle-purple",
+      "font-name": "Inter 11",
+      "monospace-font": "JetBrains Mono 11",
+      "color-scheme": "prefer-dark",
+      "shell-theme": "Orchis-Purple-Dark",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-purple.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-purple.tar.xz",
+        "shell-theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-purple.tar.xz",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      },
+      "extensions": {
+        "user-theme@gnome-shell-extensions.gcampax.github.com": {
+          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
+          "schema": "org.gnome.shell.extensions.user-theme",
+          "settings": {
+            "name": "Orchis-Purple-Dark"
+          }
+        },
+        "dash-to-panel@jderose9.github.com": {
+          "url": "https://github.com/home-sweet-gnome/dash-to-panel/releases/download/v60/dash-to-panel@jderose9.github.com_v60.zip",
+          "schema": "org.gnome.shell.extensions.dash-to-panel",
+          "settings": {
+            "panel-positions": "{\"0\":\"BOTTOM\"}",
+            "multi-monitors": true,
+            "isolate-workspaces": true,
+            "show-favorites": true,
+            "show-window-previews": true,
+            "intelligent-hide": false,
+            "dot-style-focused": "SOLID",
+            "dot-style-unfocused": "SOLID",
+            "trans-use-custom-opacity": true,
+            "trans-panel-opacity": 0.88
+          }
+        },
+        "blur-my-shell@aunetx": {
+          "url": "https://github.com/aunetx/blur-my-shell/releases/download/v62/blur-my-shell@aunetx.zip",
+          "schema": "org.gnome.shell.extensions.blur-my-shell",
+          "settings": {
+            "brightness": 0.5,
+            "sigma": 40
+          }
+        }
+      },
+      "layout": {}
+    }
+  }
+}

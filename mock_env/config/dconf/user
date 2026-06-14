@@ -1,0 +1,7 @@
+# Fake dconf database
+[/org/gnome/desktop/interface]
+gtk-theme='Adwaita'
+icon-theme='Adwaita'
+font-name='Source Sans Pro 11'
+[/org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/default.jpg'

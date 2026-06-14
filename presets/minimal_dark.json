@@ -1,0 +1,73 @@
+{
+  "name": "Minimal Dark",
+  "description": "Clean dark theme with minimal distractions",
+  "themes": {
+    "gtk": "Adwaita-dark",
+    "icon": "Adwaita",
+    "cursor": "Adwaita",
+    "font": "Inter 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/dg/dgwallhaven-dg6oo3.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Adwaita-dark",
+      "icon-theme": "Adwaita",
+      "font-name": "Inter 11",
+      "color-scheme": "prefer-dark",
+      "resources": {
+        "theme-url": "",
+        "icon-url": "",
+        "fonts": []
+      },
+      "extensions": {},
+      "layout": {}
+    },
+    "kde": {
+      "plasma-theme": "Breeze Dark",
+      "icon-theme": "Breeze",
+      "resources": {
+        "theme-url": "",
+        "icon-url": "",
+        "cursor-url": "",
+        "fonts": []
+      }
+    },
+    "hyprland": {
+      "gtk-theme": "Adwaita-dark",
+      "waybar-style": "minimal",
+      "rofi-theme": "minimal",
+      "resources": {
+        "theme-url": "",
+        "icon-url": "",
+        "cursor-url": "",
+        "waybar-style-url": "",
+        "rofi-theme-url": "",
+        "fonts": []
+      },
+      "theme": {
+        "general:border_size": 1,
+        "general:gaps_in": 3,
+        "general:gaps_out": 5,
+        "general:col.active_border": "0xffffffff",
+        "general:col.inactive_border": "0xff444444",
+        "decoration:rounding": 4,
+        "decoration:blur:enabled": false,
+        "decoration:active_opacity": 1.0,
+        "decoration:inactive_opacity": 0.9
+      }
+    },
+    "xfce": {
+      "gtk-theme": "Adwaita-dark",
+      "icon-theme": "Adwaita",
+      "cursor-theme": "Adwaita",
+      "font-name": "Inter 11",
+      "monospace-font": "JetBrains Mono 11",
+      "resources": {
+        "theme-url": "",
+        "icon-url": "",
+        "cursor-url": "",
+        "fonts": []
+      }
+    }
+  }
+}

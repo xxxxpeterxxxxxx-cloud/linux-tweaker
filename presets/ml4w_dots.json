@@ -1,0 +1,25 @@
+{
+  "name": "ML4W Dots",
+  "description": "Full-featured desktop environment with adaptive material color themes. Includes settings app and live ISO.",
+  "themes": {"gtk":"Adwaita","icon":"Adwaita","cursor":"Adwaita","font":"Sans 11"},
+  "wallpaper": "",
+  "settings": {
+    "hyprland": {
+      "dotfiles": {
+        "repo": "https://github.com/mylinuxforwork/dotfiles",
+        "branch": "main",
+        "dependencies": ["hyprland","waybar","rofi","swww","dunst","kitty","python","brightnessctl","pamixer"],
+        "config_paths": {
+          "dotfiles/.config/hypr": "~/.config/hypr",
+          "dotfiles/.config/waybar": "~/.config/waybar",
+          "dotfiles/.config/rofi": "~/.config/rofi",
+          "dotfiles/.config/dunst": "~/.config/dunst",
+          "dotfiles/.config/kitty": "~/.config/kitty",
+          "dotfiles/.config/swww": "~/.config/swww",
+          "dotfiles/.config/ml4w": "~/.config/ml4w"
+        },
+        "install_script": "install.sh"
+      }
+    }
+  }
+}

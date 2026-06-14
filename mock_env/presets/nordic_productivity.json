@@ -1,0 +1,22 @@
+{
+  "name": "Nordic Productivity",
+  "description": "Nord color scheme optimized for focus",
+  "themes": {
+    "gtk": "Nordic",
+    "icon": "Nordic",
+    "cursor": "Vimix",
+    "font": "Fira Code 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/xj/xjwallhaven-xjdm7y.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Nordic",
+      "icon-theme": "Nordic",
+      "font-name": "Fira Code 11"
+    },
+    "kde": {
+      "plasma-theme": "Nordic",
+      "icon-theme": "Nordic"
+    }
+  }
+}

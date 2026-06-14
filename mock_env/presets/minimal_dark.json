@@ -1,0 +1,22 @@
+{
+  "name": "Minimal Dark",
+  "description": "Clean dark theme with minimal distractions",
+  "themes": {
+    "gtk": "Adwaita-dark",
+    "icon": "Adwaita",
+    "cursor": "Adwaita",
+    "font": "Inter 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/dg/dgwallhaven-dg6oo3.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Adwaita-dark",
+      "icon-theme": "Adwaita",
+      "font-name": "Inter 11"
+    },
+    "kde": {
+      "plasma-theme": "Breeze Dark",
+      "icon-theme": "Breeze"
+    }
+  }
+}

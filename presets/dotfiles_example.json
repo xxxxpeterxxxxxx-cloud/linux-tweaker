@@ -1,0 +1,31 @@
+{
+  "name": "Dotfiles Example",
+  "description": "Example preset showing how to use a full dotfiles repo. Replace the repo URL with your chosen rice.",
+  "themes": {
+    "gtk": "Adwaita",
+    "icon": "Adwaita",
+    "cursor": "Adwaita",
+    "font": "Sans 11"
+  },
+  "wallpaper": "",
+  "settings": {
+    "hyprland": {
+      "dotfiles": {
+        "repo": "https://github.com/USERNAME/dotfiles",
+        "branch": "main",
+        "dependencies": ["ags", "sassc", "brightnessctl", "pamixer"],
+        "config_paths": {
+          "hypr": "~/.config/hypr",
+          "waybar": "~/.config/waybar",
+          "ags": "~/.config/ags",
+          "rofi": "~/.config/rofi",
+          "fish": "~/.config/fish"
+        },
+        "install_script": "install.sh"
+      },
+      "resources": {
+        "fonts": []
+      }
+    }
+  }
+}

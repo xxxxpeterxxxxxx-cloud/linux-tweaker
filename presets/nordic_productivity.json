@@ -1,0 +1,93 @@
+{
+  "name": "Nordic Productivity",
+  "description": "Nord color scheme optimized for focus",
+  "themes": {
+    "gtk": "Nordic",
+    "icon": "Nordic",
+    "cursor": "Vimix",
+    "font": "Fira Code 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/xj/xjwallhaven-xjdm7y.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Nordic",
+      "icon-theme": "Nordic",
+      "font-name": "Fira Code 11",
+      "monospace-font": "Fira Code 11",
+      "color-scheme": "prefer-dark",
+      "shell-theme": "Nordic",
+      "resources": {
+        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
+        "icon-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic-icons.tar.xz",
+        "shell-theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
+        "fonts": [
+          "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
+        ]
+      },
+      "extensions": {
+        "user-theme@gnome-shell-extensions.gcampax.github.com": {
+          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
+          "schema": "org.gnome.shell.extensions.user-theme",
+          "settings": {
+            "name": "Nordic"
+          }
+        }
+      },
+      "layout": {}
+    },
+    "kde": {
+      "plasma-theme": "Nordic",
+      "icon-theme": "Nordic",
+      "resources": {
+        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
+        "icon-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic-icons.tar.xz",
+        "fonts": [
+          "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
+        ]
+      }
+    },
+    "hyprland": {
+      "gtk-theme": "Nordic",
+      "waybar-style": "nordic",
+      "rofi-theme": "nordic",
+      "resources": {
+        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
+        "icon-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic-icons.tar.xz",
+        "cursor-url": "https://github.com/vinceliuice/Vimix-cursors/releases/download/v2022-03-21/Vimix-cursors.tar.xz",
+        "waybar-style-url": "",
+        "rofi-theme-url": "",
+        "fonts": [
+          "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
+        ]
+      },
+      "theme": {
+        "general:border_size": 2,
+        "general:gaps_in": 4,
+        "general:gaps_out": 8,
+        "general:col.active_border": "0xff88c0d0",
+        "general:col.inactive_border": "0xff4c566a",
+        "decoration:rounding": 6,
+        "decoration:blur:enabled": true,
+        "decoration:blur:size": 4,
+        "decoration:blur:passes": 2,
+        "decoration:active_opacity": 0.95,
+        "decoration:inactive_opacity": 0.85
+      }
+    },
+    "xfce": {
+      "gtk-theme": "Nordic",
+      "icon-theme": "Nordic",
+      "cursor-theme": "Vimix",
+      "font-name": "Fira Code 11",
+      "monospace-font": "Fira Code 11",
+      "resources": {
+        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
+        "icon-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic-icons.tar.xz",
+        "cursor-url": "https://github.com/vinceliuice/Vimix-cursors/releases/download/v2022-03-21/Vimix-cursors.tar.xz",
+        "fonts": [
+          "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
+        ]
+      }
+    }
+  }
+}

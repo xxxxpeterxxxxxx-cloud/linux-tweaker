@@ -1,0 +1,5 @@
+export MOCK_ROOT="/var/home/julius/CascadeProjects/windsurf-project/linux-tweaker/mock_env"
+export XDG_CURRENT_DESKTOP="GNOME"
+export XDG_CONFIG_HOME="/var/home/julius/CascadeProjects/windsurf-project/linux-tweaker/mock_env/config"
+export XDG_DATA_HOME="/var/home/julius/CascadeProjects/windsurf-project/linux-tweaker/mock_env/share"
+export PATH="/var/home/julius/CascadeProjects/windsurf-project/linux-tweaker/mock_env/bin:/var/home/julius/.spicetify:/var/home/julius/.spicetify:/var/home/julius/.local/bin:/var/home/julius/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/var/home/julius/.spicetify:/var/home/julius/.spicetify:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/sbin:/sbin:/bin:/var/home/julius/.devin/extensions/ms-python.debugpy-2026.6.0-linux-x64/bundled/scripts/noConfigScripts:/var/home/julius/.spicetify"

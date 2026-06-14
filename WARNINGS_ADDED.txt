@@ -1,0 +1,132 @@
+================================================================================
+                    WARNINGS AND DISCLAIMERS ADDED ✅
+================================================================================
+
+DATE: 2026-06-14
+STATUS: ✅ COMPLETE
+
+================================================================================
+                         README.md UPDATED
+================================================================================
+
+Added comprehensive warning section right after Features and before Quick Start:
+
+✅ "⚠️ Important Warning" section includes:
+   - CAUTION statement about config file modification
+   - "Before using linux-tweaker" checklist (4 items)
+   - "What can go wrong" risks (3 scenarios)
+   - "What's protected" safeguards (4 items)
+   - Links to Troubleshooting and Security sections
+
+Key warnings:
+- Users must create manual backups
+- Users must understand what each preset does
+- Users should test on non-critical systems first
+- Users must keep backup IDs for rollback
+
+Safeguards highlighted:
+- Automatic backups before every apply
+- Easy rollback with backup IDs
+- No system files modified (only user configs)
+- No root/sudo required
+
+================================================================================
+                         LICENSE UPDATED
+================================================================================
+
+Added comprehensive DISCLAIMER section to MIT License:
+
+✅ "DISCLAIMER" section includes:
+   - IMPORTANT statement about AT YOUR OWN RISK usage
+   - "No liability for" list (5 items):
+     * Loss or corruption of configuration files
+     * Incompatibility with system or desktop environment
+     * Partial application due to interrupted processes
+     * Missing dependencies or required tools
+     * Any damage or loss caused by using the software
+   
+   - "Before using this software" checklist (4 items):
+     * Create manual backups
+     * Read documentation
+     * Test on non-critical system
+     * Keep track of backup IDs
+   
+   - "By using this software, you acknowledge" (4 points):
+     * You have read and understood the disclaimer
+     * You accept full responsibility for consequences
+     * Authors are not responsible for data loss or damage
+     * You have the right to restore from backups
+
+================================================================================
+                         LEGAL PROTECTION
+================================================================================
+
+The following legal protections are now in place:
+
+✅ README.md:
+   - Clear warning about config modification
+   - User responsibility emphasized
+   - Backup/restore safeguards explained
+   - Risk assessment provided
+   - Mitigation strategies listed
+
+✅ LICENSE (MIT + Disclaimer):
+   - Standard MIT license (permissive)
+   - NO WARRANTY clause (standard MIT)
+   - NO LIABILITY clause (standard MIT)
+   - Additional DISCLAIMER section (custom)
+   - Clear statement of user responsibility
+   - Acknowledgment of risks
+   - Backup/restore rights preserved
+
+================================================================================
+                         USER RESPONSIBILITY
+================================================================================
+
+Users are now clearly informed that they:
+
+1. ✅ Use the software AT THEIR OWN RISK
+2. ✅ Must create manual backups before using
+3. ✅ Must understand what each preset does
+4. ✅ Should test on non-critical systems first
+5. ✅ Must keep backup IDs for rollback
+6. ✅ Accept full responsibility for consequences
+7. ✅ Cannot hold authors liable for damage
+8. ✅ Have the right to restore from backups
+
+================================================================================
+                         COMPLIANCE CHECKLIST
+================================================================================
+
+✅ README.md has warning section
+✅ LICENSE has disclaimer section
+✅ Warnings are prominent and clear
+✅ Risks are clearly listed
+✅ Safeguards are clearly listed
+✅ User responsibility is emphasized
+✅ Backup/restore is highlighted
+✅ Legal protection is in place
+✅ All files updated and verified
+
+================================================================================
+                         READY FOR UPLOAD
+================================================================================
+
+The project now has:
+- ✅ Clear warnings about config modification
+- ✅ Legal disclaimers about liability
+- ✅ User responsibility emphasized
+- ✅ Safeguards and protections explained
+- ✅ Backup/restore highlighted
+- ✅ Professional legal language
+
+Status: ✅ READY FOR GITHUB UPLOAD
+
+All users will see the warning immediately when they:
+1. Read the README.md (warning is near the top)
+2. Check the LICENSE file (disclaimer is included)
+3. Use the tool (backup mechanism is automatic)
+
+================================================================================
+
+Made with ❤️ for the Linux ricing community

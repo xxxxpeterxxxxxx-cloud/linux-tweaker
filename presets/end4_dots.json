@@ -1,0 +1,36 @@
+{
+  "name": "end-4 Dots (Quickshell)",
+  "description": "Popular usability-first Hyprland rice with Quickshell widgets, AI assistant, and material theming. Installs from end-4/dots-hyprland.",
+  "themes": {
+    "gtk": "Adwaita",
+    "icon": "Adwaita",
+    "cursor": "Adwaita",
+    "font": "Sans 11"
+  },
+  "wallpaper": "",
+  "settings": {
+    "hyprland": {
+      "dotfiles": {
+        "repo": "https://github.com/end-4/dots-hyprland",
+        "branch": "main",
+        "dependencies": [
+          "hyprland",
+          "quickshell",
+          "fuzzel",
+          "brightnessctl",
+          "pamixer",
+          "grimblast",
+          "wl-clipboard",
+          "swww",
+          "python",
+          "dart-sass"
+        ],
+        "config_paths": {},
+        "install_script": "setup"
+      },
+      "resources": {
+        "fonts": []
+      }
+    }
+  }
+}

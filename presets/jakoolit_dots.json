@@ -1,0 +1,22 @@
+{
+  "name": "JaKooLit Dots",
+  "description": "Clean Hyprland rice with wallust, waybar, rofi. Uses copy.sh",
+  "themes": {"gtk":"Adwaita","icon":"Adwaita","cursor":"Adwaita","font":"JetBrainsMono 11"},
+  "wallpaper": "",
+  "settings": {
+    "hyprland": {
+      "dotfiles": {
+        "repo": "https://github.com/JaKooLit/Hyprland-Dots",
+        "branch": "main",
+        "dependencies": ["hyprland","waybar","rofi","swww","wallust","kitty"],
+        "config_paths": {
+          "config/hypr": "~/.config/hypr",
+          "config/waybar": "~/.config/waybar",
+          "config/rofi": "~/.config/rofi",
+          "config/kitty": "~/.config/kitty"
+        },
+        "install_script": "copy.sh"
+      }
+    }
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "name": "Cyberpunk",
+  "description": "Neon colors, dark theme, futuristic fonts, custom panel layout",
+  "themes": {
+    "gtk": "Catppuccin-Mocha-Blue",
+    "icon": "Tela-circle-dracula",
+    "cursor": "Bibata-Modern-Ice",
+    "font": "JetBrains Mono 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/wq/wallhaven-wqve6r.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Catppuccin-Mocha-Blue",
+      "icon-theme": "Tela-circle-dracula",
+      "font-name": "JetBrains Mono 11",
+      "monospace-font": "JetBrains Mono 11",
+      "color-scheme": "prefer-dark",
+      "shell-theme": "Catppuccin-Mocha-Blue",
+      "resources": {
+        "theme-url": "https://github.com/catppuccin/gtk/releases/download/v0.7.5/Catppuccin-Mocha-Blue.zip",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2023-01-01/01-Tela-circle-dracula.tar.xz",
+        "shell-theme-url": "https://github.com/catppuccin/gnome-shell-theme/archive/refs/heads/main.zip",
+        "fonts": [
+          "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
+        ]
+      },
+      "extensions": {
+        "user-theme@gnome-shell-extensions.gcampax.github.com": {
+          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
+          "schema": "org.gnome.shell.extensions.user-theme",
+          "settings": {
+            "name": "Catppuccin-Mocha-Blue"
+          }
+        },
+        "dash-to-panel@jderose9.github.com": {
+          "url": "https://github.com/home-sweet-gnome/dash-to-panel/releases/download/v60/dash-to-panel@jderose9.github.com_v60.zip",
+          "schema": "org.gnome.shell.extensions.dash-to-panel",
+          "settings": {
+            "panel-positions": "{\"0\":\"TOP\"}",
+            "multi-monitors": true,
+            "isolate-workspaces": true,
+            "show-favorites": true,
+            "show-window-previews": true,
+            "intelligent-hide": false
+          }
+        },
+        "blur-my-shell@aunetx": {
+          "url": "https://github.com/aunetx/blur-my-shell/releases/download/v62/blur-my-shell@aunetx.zip",
+          "schema": "org.gnome.shell.extensions.blur-my-shell",
+          "settings": {
+            "brightness": 0.6,
+            "sigma": 30
+          }
+        }
+      },
+      "layout": {
+        "org.gnome.shell.extensions.dash-to-dock": {
+          "dock-position": "LEFT",
+          "dash-max-icon-size": 48
+        }
+      }
+    },
+    "kde": {
+      "plasma-theme": "Catppuccin-Mocha-Blue",
+      "icon-theme": "Tela-circle-dracula",
+      "resources": {
+        "theme-url": "https://github.com/catppuccin/gtk/releases/download/v0.7.5/Catppuccin-Mocha-Blue.zip",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2023-01-01/01-Tela-circle-dracula.tar.xz",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Ice.tar.xz",
+        "fonts": [
+          "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
+        ]
+      }
+    },
+    "hyprland": {
+      "gtk-theme": "Catppuccin-Mocha-Blue",
+      "waybar-style": "cyberpunk",
+      "rofi-theme": "cyberpunk",
+      "resources": {
+        "theme-url": "https://github.com/catppuccin/gtk/releases/download/v0.7.5/Catppuccin-Mocha-Blue.zip",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2023-01-01/01-Tela-circle-dracula.tar.xz",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Ice.tar.xz",
+        "waybar-style-url": "",
+        "rofi-theme-url": "",
+        "fonts": [
+          "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
+        ]
+      },
+      "theme": {
+        "general:border_size": 2,
+        "general:gaps_in": 5,
+        "general:gaps_out": 10,
+        "general:col.active_border": "0xff89b4fa",
+        "general:col.inactive_border": "0xff313244",
+        "decoration:rounding": 8,
+        "decoration:blur:enabled": true,
+        "decoration:blur:size": 5,
+        "decoration:blur:passes": 3,
+        "decoration:active_opacity": 0.95,
+        "decoration:inactive_opacity": 0.8
+      }
+    },
+    "xfce": {
+      "gtk-theme": "Catppuccin-Mocha-Blue",
+      "icon-theme": "Tela-circle-dracula",
+      "cursor-theme": "Bibata-Modern-Ice",
+      "font-name": "JetBrains Mono 11",
+      "monospace-font": "JetBrains Mono 11",
+      "resources": {
+        "theme-url": "https://github.com/catppuccin/gtk/releases/download/v0.7.5/Catppuccin-Mocha-Blue.zip",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2023-01-01/01-Tela-circle-dracula.tar.xz",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Ice.tar.xz",
+        "fonts": [
+          "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "name": "Lime Glass",
+  "description": "Dark glassmorphism with lime accents, top panel, blur, and media widgets",
+  "themes": {
+    "gtk": "Orchis-Green-Dark",
+    "icon": "Tela-circle-green",
+    "cursor": "Bibata-Modern-Classic",
+    "font": "Inter 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/9m/wallhaven-9mjoy1.png",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Orchis-Green-Dark",
+      "icon-theme": "Tela-circle-green",
+      "font-name": "Inter 11",
+      "monospace-font": "JetBrains Mono 11",
+      "color-scheme": "prefer-dark",
+      "shell-theme": "Orchis-Green-Dark",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-green.tar.xz",
+        "shell-theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      },
+      "extensions": {
+        "dash-to-panel@jderose9.github.com": {
+          "url": "https://github.com/home-sweet-gnome/dash-to-panel/releases/download/v60/dash-to-panel@jderose9.github.com_v60.zip",
+          "schema": "org.gnome.shell.extensions.dash-to-panel",
+          "settings": {
+            "panel-positions": "{\"0\":\"TOP\"}",
+            "multi-monitors": true,
+            "isolate-workspaces": true,
+            "show-favorites": true,
+            "show-window-previews": true,
+            "intelligent-hide": false,
+            "dot-style-focused": "SOLID",
+            "dot-style-unfocused": "SOLID",
+            "trans-use-custom-opacity": true,
+            "trans-panel-opacity": 0.85
+          }
+        },
+        "blur-my-shell@aunetx": {
+          "url": "https://github.com/aunetx/blur-my-shell/releases/download/v62/blur-my-shell@aunetx.zip",
+          "schema": "org.gnome.shell.extensions.blur-my-shell",
+          "settings": {
+            "brightness": 0.55,
+            "sigma": 35
+          }
+        }
+      },
+      "layout": {}
+    },
+    "kde": {
+      "plasma-theme": "Orchis-Green-Dark",
+      "icon-theme": "Tela-circle-green",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-green.tar.xz",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      }
+    },
+    "hyprland": {
+      "gtk-theme": "Orchis-Green-Dark",
+      "waybar-style": "lime-glass",
+      "rofi-theme": "lime-glass",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-green.tar.xz",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Classic.tar.xz",
+        "waybar-style-url": "",
+        "rofi-theme-url": "",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      },
+      "theme": {
+        "general:border_size": 2,
+        "general:gaps_in": 5,
+        "general:gaps_out": 10,
+        "general:col.active_border": "0xffa6e3a1",
+        "general:col.inactive_border": "0xff313244",
+        "decoration:rounding": 10,
+        "decoration:blur:enabled": true,
+        "decoration:blur:size": 8,
+        "decoration:blur:passes": 4,
+        "decoration:active_opacity": 0.9,
+        "decoration:inactive_opacity": 0.75
+      }
+    },
+    "xfce": {
+      "gtk-theme": "Orchis-Green-Dark",
+      "icon-theme": "Tela-circle-green",
+      "cursor-theme": "Bibata-Modern-Classic",
+      "font-name": "Inter 11",
+      "monospace-font": "JetBrains Mono 11",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-green.tar.xz",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Classic.tar.xz",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      }
+    }
+  }
+}

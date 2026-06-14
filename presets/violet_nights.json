@@ -1,0 +1,75 @@
+{
+  "name": "Violet Nights",
+  "description": "Deep purple and violet glassmorphism with high contrast accents. Perfect for dark room coding.",
+  "themes": {
+    "gtk": "Orchis-Purple-Dark",
+    "icon": "Tela-circle-dracula",
+    "cursor": "Bibata-Modern-Classic",
+    "font": "Inter 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/49/wallhaven-495g6x.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Orchis-Purple-Dark",
+      "icon-theme": "Tela-circle-dracula",
+      "font-name": "Inter 11",
+      "monospace-font": "JetBrains Mono 11",
+      "color-scheme": "prefer-dark",
+      "shell-theme": "Orchis-Purple-Dark",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-purple.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-dracula.tar.xz",
+        "shell-theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-purple.tar.xz",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      },
+      "extensions": {
+        "user-theme@gnome-shell-extensions.gcampax.github.com": {
+          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
+          "schema": "org.gnome.shell.extensions.user-theme",
+          "settings": {
+            "name": "Orchis-Purple-Dark"
+          }
+        },
+        "blur-my-shell@aunetx": {
+          "url": "https://github.com/aunetx/blur-my-shell/releases/download/v62/blur-my-shell@aunetx.zip",
+          "schema": "org.gnome.shell.extensions.blur-my-shell",
+          "settings": {
+            "brightness": 0.5,
+            "sigma": 40
+          }
+        }
+      },
+      "layout": {}
+    },
+    "hyprland": {
+      "gtk-theme": "Orchis-Purple-Dark",
+      "waybar-style": "violet",
+      "rofi-theme": "violet",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-purple.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-dracula.tar.xz",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Classic.tar.xz",
+        "waybar-style-url": "",
+        "rofi-theme-url": "",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      },
+      "theme": {
+        "general:border_size": 2,
+        "general:gaps_in": 5,
+        "general:gaps_out": 10,
+        "general:col.active_border": "0xffbd93f9",
+        "general:col.inactive_border": "0xff2a2139",
+        "decoration:rounding": 10,
+        "decoration:blur:enabled": true,
+        "decoration:blur:size": 8,
+        "decoration:blur:passes": 4,
+        "decoration:active_opacity": 0.9,
+        "decoration:inactive_opacity": 0.75
+      }
+    }
+  }
+}

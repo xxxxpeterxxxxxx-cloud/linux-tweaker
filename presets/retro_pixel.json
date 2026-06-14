@@ -1,0 +1,67 @@
+{
+  "name": "Retro Pixel",
+  "description": "Neon cyber-retro with hot pink and cyan accents, matrix rain vibes, pixel art friendly.",
+  "themes": {
+    "gtk": "Catppuccin-Mocha-Pink",
+    "icon": "Tela-circle-dracula",
+    "cursor": "Bibata-Modern-Ice",
+    "font": "JetBrains Mono 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/l8/wallhaven-l8r6mq.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Catppuccin-Mocha-Pink",
+      "icon-theme": "Tela-circle-dracula",
+      "font-name": "JetBrains Mono 11",
+      "monospace-font": "JetBrains Mono 11",
+      "color-scheme": "prefer-dark",
+      "shell-theme": "Catppuccin-Mocha-Pink",
+      "resources": {
+        "theme-url": "https://github.com/catppuccin/gtk/releases/download/v0.7.5/Catppuccin-Mocha-Pink.zip",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-dracula.tar.xz",
+        "shell-theme-url": "https://github.com/catppuccin/gnome-shell-theme/archive/refs/heads/main.zip",
+        "fonts": [
+          "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
+        ]
+      },
+      "extensions": {
+        "user-theme@gnome-shell-extensions.gcampax.github.com": {
+          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
+          "schema": "org.gnome.shell.extensions.user-theme",
+          "settings": {
+            "name": "Catppuccin-Mocha-Pink"
+          }
+        }
+      },
+      "layout": {}
+    },
+    "hyprland": {
+      "gtk-theme": "Catppuccin-Mocha-Pink",
+      "waybar-style": "retro",
+      "rofi-theme": "retro",
+      "resources": {
+        "theme-url": "https://github.com/catppuccin/gtk/releases/download/v0.7.5/Catppuccin-Mocha-Pink.zip",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-dracula.tar.xz",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Ice.tar.xz",
+        "waybar-style-url": "",
+        "rofi-theme-url": "",
+        "fonts": [
+          "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
+        ]
+      },
+      "theme": {
+        "general:border_size": 2,
+        "general:gaps_in": 4,
+        "general:gaps_out": 8,
+        "general:col.active_border": "0xffff79c6",
+        "general:col.inactive_border": "0xff282a36",
+        "decoration:rounding": 4,
+        "decoration:blur:enabled": true,
+        "decoration:blur:size": 3,
+        "decoration:blur:passes": 2,
+        "decoration:active_opacity": 0.95,
+        "decoration:inactive_opacity": 0.85
+      }
+    }
+  }
+}

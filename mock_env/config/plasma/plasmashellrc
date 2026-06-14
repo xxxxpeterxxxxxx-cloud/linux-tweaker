@@ -1,0 +1,4 @@
+[General]
+shellPackage=org.kde.plasma.desktop
+[Theme]
+name=default

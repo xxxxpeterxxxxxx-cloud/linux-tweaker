@@ -1,0 +1,75 @@
+{
+  "name": "Blue Dream",
+  "description": "Smooth blue-purple gradient glass theme with soft animations and media widgets.",
+  "themes": {
+    "gtk": "Orchis-Blue-Dark",
+    "icon": "Tela-circle-blue",
+    "cursor": "Bibata-Modern-Ice",
+    "font": "Inter 11"
+  },
+  "wallpaper": "https://w.wallhaven.cc/full/28/wallhaven-28p95y.jpg",
+  "settings": {
+    "gnome": {
+      "gtk-theme": "Orchis-Blue-Dark",
+      "icon-theme": "Tela-circle-blue",
+      "font-name": "Inter 11",
+      "monospace-font": "JetBrains Mono 11",
+      "color-scheme": "prefer-dark",
+      "shell-theme": "Orchis-Blue-Dark",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-blue.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-blue.tar.xz",
+        "shell-theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-blue.tar.xz",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      },
+      "extensions": {
+        "user-theme@gnome-shell-extensions.gcampax.github.com": {
+          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
+          "schema": "org.gnome.shell.extensions.user-theme",
+          "settings": {
+            "name": "Orchis-Blue-Dark"
+          }
+        },
+        "blur-my-shell@aunetx": {
+          "url": "https://github.com/aunetx/blur-my-shell/releases/download/v62/blur-my-shell@aunetx.zip",
+          "schema": "org.gnome.shell.extensions.blur-my-shell",
+          "settings": {
+            "brightness": 0.55,
+            "sigma": 35
+          }
+        }
+      },
+      "layout": {}
+    },
+    "hyprland": {
+      "gtk-theme": "Orchis-Blue-Dark",
+      "waybar-style": "blue-dream",
+      "rofi-theme": "blue-dream",
+      "resources": {
+        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-blue.tar.xz",
+        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-blue.tar.xz",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Ice.tar.xz",
+        "waybar-style-url": "",
+        "rofi-theme-url": "",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      },
+      "theme": {
+        "general:border_size": 2,
+        "general:gaps_in": 5,
+        "general:gaps_out": 12,
+        "general:col.active_border": "0xff89b4fa",
+        "general:col.inactive_border": "0xff1a1b26",
+        "decoration:rounding": 12,
+        "decoration:blur:enabled": true,
+        "decoration:blur:size": 8,
+        "decoration:blur:passes": 4,
+        "decoration:active_opacity": 0.92,
+        "decoration:inactive_opacity": 0.78
+      }
+    }
+  }
+}

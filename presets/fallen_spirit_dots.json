@@ -1,0 +1,23 @@
+{
+  "name": "Fallen Spirit Dots",
+  "description": "Personal Arch + Hyprland config using Rofi, AGS, SDDM. Clean and functional.",
+  "themes": {"gtk":"Adwaita","icon":"Adwaita","cursor":"Adwaita","font":"JetBrainsMono 11"},
+  "wallpaper": "",
+  "settings": {
+    "hyprland": {
+      "dotfiles": {
+        "repo": "https://github.com/TheFallenSpirit/dotfiles",
+        "branch": "main",
+        "dependencies": ["hyprland","waybar","rofi","ags","swww","kitty"],
+        "config_paths": {
+          "hypr": "~/.config/hypr",
+          "waybar": "~/.config/waybar",
+          "rofi": "~/.config/rofi",
+          "ags": "~/.config/ags",
+          "kitty": "~/.config/kitty"
+        },
+        "install_script": ""
+      }
+    }
+  }
+}
