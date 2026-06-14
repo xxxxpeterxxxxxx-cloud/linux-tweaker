@@ -280,14 +280,10 @@ class MainMenu:
                 backup = backups[int(backup_name) - 1]
                 backup_name = backup.name
             # Extract backup_id: gnome_20260612_174204.json -> 20260612_174204
-            if backup_name.startswith("gnome_"):
-                backup_id = backup_name.replace("gnome_", "").replace(".json", "")
-            elif backup_name.startswith("hyprland_"):
-                backup_id = backup_name.replace("hyprland_", "").replace(".json", "")
-            elif backup_name.startswith("plasma_"):
-                backup_id = backup_name.replace("plasma_", "").replace(".json", "")
-            elif backup_name.startswith("xfce_"):
-                backup_id = backup_name.replace("xfce_", "").replace(".json", "")
+            for prefix in ["gnome_", "hyprland_", "plasma_", "xfce_"]:
+                if backup_name.startswith(prefix):
+                    backup_id = backup_name.replace(prefix, "").replace(".json", "")
+                    break
             else:
                 backup_id = backup_name.split(".")[0]
             self.theme_engine.restore_backup(backup_id)

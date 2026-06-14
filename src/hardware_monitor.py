@@ -31,7 +31,7 @@ class HardwareMonitor:
                 temp_inputs = list(hwmon.glob("temp*_input"))
                 if not temp_inputs:
                     continue
-                temp_millicelsius = int(temp_inputs[0].read_text().strip()) if temp_inputs else 0
+                temp_millicelsius = int(temp_inputs[0].read_text().strip())
                 temps[name] = round(temp_millicelsius / 1000.0, 1)
             except (FileNotFoundError, ValueError):
                 continue

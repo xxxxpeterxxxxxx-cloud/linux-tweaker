@@ -78,7 +78,7 @@ class PowerTuner:
 
         if status == "discharging" and capacity < 20:
             self.set_power_profile("power-saver")
-        elif status == "charging" and temps and temps.values() and max(temps.values()) < 70:
+        elif status == "charging" and temps and max(temps.values()) < 70:
             self.set_power_profile("performance")
         else:
             self.set_power_profile("balanced")
