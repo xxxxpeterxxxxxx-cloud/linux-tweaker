@@ -40,7 +40,7 @@ class GnomeThemeEngine(ThemeEngine):
         try:
             r = self._run(["gsettings", "get", schema, key], check=True)
             return r.stdout.strip().strip("'\"\n")
-        except Exception:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError):
             return "unknown"
 
     def _gset(self, schema: str, key: str, value: str) -> bool:
@@ -63,7 +63,7 @@ class GnomeThemeEngine(ThemeEngine):
         try:
             self._run(["dconf", "write", f"{path}/{key}", f"'{value}'"], check=False)
             return True
-        except Exception:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError):
             return False
 
     # ── Resource installation ─────────────────────────────────────────

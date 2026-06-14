@@ -96,6 +96,12 @@ class ThemeEngine(ABC):
 
     def _download_file(self, url: str, dest: Path) -> bool:
         """Download a file via curl or wget. Returns True on success."""
+        # Basic URL validation to prevent security issues
+        if not url or not isinstance(url, str):
+            return False
+        if not (url.startswith("http://") or url.startswith("https://")):
+            return False
+        
         dest.parent.mkdir(parents=True, exist_ok=True)
         for downloader in (["curl", "-fsSL", "-o", str(dest), url],
                            ["wget", "-q", "-O", str(dest), url]):
@@ -135,7 +141,7 @@ class ThemeEngine(ABC):
                     t.extractall(dest_dir)
             else:
                 return None
-        except Exception as e:
+        except (zipfile.BadZipFile, tarfile.TarError, OSError) as e:
             print(f"[ThemeEngine] Extraction failed for {archive}: {e}")
             return None
         # Return the first sub-directory that was created
@@ -173,7 +179,7 @@ class ThemeEngine(ABC):
                                     installed += 1
                                     print(f"  -> Font installed: {extracted_file.name}")
                     shutil.rmtree(tmp_extract)
-                except Exception as e:
+                except (zipfile.BadZipFile, OSError) as e:
                     print(f"  -> Font zip extraction failed: {e}")
                 finally:
                     if dest.exists():

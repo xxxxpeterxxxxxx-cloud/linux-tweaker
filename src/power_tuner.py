@@ -43,7 +43,7 @@ class PowerTuner:
                 capture_output=True, text=True, check=True
             )
             return result.stdout.strip()
-        except Exception:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError):
             return "balanced"
 
     def set_power_profile(self, profile: str) -> bool:
@@ -52,7 +52,7 @@ class PowerTuner:
             subprocess.run(["powerprofilesctl", "set", profile], check=True)
             print(f"[PowerTuner] Profile set: {profile}")
             return True
-        except Exception as e:
+        except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
             print(f"[PowerTuner] Failed to set {profile}: {e}")
             return False
 

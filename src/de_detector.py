@@ -87,7 +87,7 @@ class DEDetector:
                 check=False,
             )
             proc = result.stdout.lower()
-        except Exception:
+        except (subprocess.SubprocessError, OSError) as e:
             return None
 
         if "gnome-shell" in proc:

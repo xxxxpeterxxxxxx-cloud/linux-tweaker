@@ -55,7 +55,7 @@ class HardwareMonitor:
                 "energy_full_wh": round(energy_full, 2),
                 "percentage": capacity,
             }
-        except Exception as e:
+        except (FileNotFoundError, ValueError, OSError) as e:
             return {"error": str(e)}
     
     def get_container_stats(self) -> List[Dict]:
@@ -71,7 +71,7 @@ class HardwareMonitor:
                 return json.loads(result.stdout)
             except json.JSONDecodeError:
                 return []
-        except Exception:
+        except (FileNotFoundError, subprocess.SubprocessError):
             return []
     
     def get_zram_stats(self) -> Dict[str, float]:
@@ -90,7 +90,7 @@ class HardwareMonitor:
                 "used_gb": round(used_gb, 2),
                 "usage_percent": round((used_gb / disksize) * 100, 1) if disksize > 0 else 0,
             }
-        except Exception as e:
+        except (FileNotFoundError, ValueError, IndexError, OSError) as e:
             return {"error": str(e)}
     
     def get_all_stats(self) -> Dict[str, Any]:
