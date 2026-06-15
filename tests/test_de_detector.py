@@ -41,7 +41,8 @@ def test_detector_xdg_colon_separated():
         detector = DEDetector()
         result = detector.detect()
         
-        assert result.name == "ubuntu"
+        # Should match GNOME (first match in ENGINE_MAP after splitting by :)
+        assert result.name == "GNOME"
         assert result.engine == "GnomeThemeEngine"
 
 

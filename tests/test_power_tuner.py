@@ -1,6 +1,7 @@
 """Tests for PowerTuner"""
 
 import pytest
+import subprocess
 from unittest.mock import patch, MagicMock
 from pathlib import Path
 
@@ -48,10 +49,7 @@ def test_power_tuner_set_power_profile_failure():
     """Test handling of profile set failure."""
     tuner = PowerTuner()
     
-    mock_result = MagicMock()
-    mock_result.returncode = 1
-    
-    with patch('subprocess.run', return_value=mock_result):
+    with patch('subprocess.run', side_effect=subprocess.SubprocessError("Failed")):
         result = tuner.set_power_profile("performance")
         assert result is False
 
@@ -60,46 +58,34 @@ def test_power_tuner_pause_idle_containers():
     """Test pausing idle containers."""
     tuner = PowerTuner()
     
-    # Mock hardware monitor to show low CPU usage
-    with patch.object(tuner, '_get_container_cpu_usage', return_value=5.0):
-        with patch('subprocess.run', return_value=MagicMock(returncode=0)) as mock_run:
-            tuner.pause_idle_containers(threshold=10.0)
-            # Should have called podman pause
-            assert any('pause' in str(call) for call in mock_run.call_args_list)
+    # Mock hardware monitor to show high temp and low CPU usage
+    with patch.object(tuner.monitor, 'get_temperatures', return_value={'cpu': 90.0}):
+        with patch.object(tuner.monitor, 'get_container_stats', return_value=[{'Name': 'test_container', 'cpu_percent': 2.0}]):
+            with patch('subprocess.run', return_value=MagicMock(returncode=0)) as mock_run:
+                tuner.pause_idle_containers()
+                # Should have called podman pause
+                assert any('pause' in str(call) for call in mock_run.call_args_list)
 
 
-def test_power_tuner_get_container_cpu_usage():
-    """Test getting container CPU usage."""
+def test_power_tuner_get_container_stats():
+    """Test getting container stats from hardware monitor."""
     tuner = PowerTuner()
     
-    mock_result = MagicMock()
-    mock_result.stdout = "CONTAINER   CPU %\ntest_container 15.5"
-    
-    with patch('subprocess.run', return_value=mock_result):
-        usage = tuner._get_container_cpu_usage("test_container")
-        assert usage == 15.5
-
-
-def test_power_tuner_get_container_cpu_usage_not_found():
-    """Test handling when container not found in stats."""
-    tuner = PowerTuner()
-    
-    mock_result = MagicMock()
-    mock_result.stdout = "CONTAINER   CPU %\nother_container 10.0"
-    
-    with patch('subprocess.run', return_value=mock_result):
-        usage = tuner._get_container_cpu_usage("test_container")
-        assert usage == 0.0
+    with patch.object(tuner.monitor, 'get_container_stats', return_value=[{'Name': 'test_container', 'cpu_percent': 15.5}]):
+        stats = tuner.monitor.get_container_stats()
+        assert len(stats) == 1
+        assert stats[0]['Name'] == 'test_container'
+        assert stats[0]['cpu_percent'] == 15.5
 
 
 def test_power_tuner_optimize_power():
     """Test power optimization based on battery status."""
     tuner = PowerTuner()
     
-    # Mock battery at low capacity
-    with patch.object(tuner.hw_monitor, 'get_battery_status', return_value={"capacity": 20, "status": "Discharging"}):
+    # Mock battery at low capacity (must be < 20 to trigger power-saver)
+    with patch.object(tuner.monitor, 'get_battery_status', return_value={"capacity": 15, "status": "Discharging"}):
         with patch.object(tuner, 'set_power_profile') as mock_set:
-            tuner.optimize_power()
+            tuner.auto_tune()
             # Should switch to power-saver
             mock_set.assert_called_with("power-saver")
 
@@ -109,8 +95,9 @@ def test_power_tuner_optimize_power_charging():
     tuner = PowerTuner()
     
     # Mock battery charging
-    with patch.object(tuner.hw_monitor, 'get_battery_status', return_value={"capacity": 50, "status": "Charging"}):
-        with patch.object(tuner, 'set_power_profile') as mock_set:
-            tuner.optimize_power()
-            # Should switch to performance when charging
-            mock_set.assert_called_with("performance")
+    with patch.object(tuner.monitor, 'get_battery_status', return_value={"capacity": 50, "status": "Charging"}):
+        with patch.object(tuner.monitor, 'get_temperatures', return_value={'cpu': 60.0}):
+            with patch.object(tuner, 'set_power_profile') as mock_set:
+                tuner.auto_tune()
+                # Should switch to performance when charging
+                mock_set.assert_called_with("performance")

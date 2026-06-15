@@ -33,8 +33,7 @@ def test_hardware_monitor_get_temperatures():
     
     mock_hwmon_path.glob.return_value = [mock_hwmon1]
     
-    with patch.object(monitor, 'sys_root', MagicMock()):
-        monitor.sys_root / "class" / "hwmon" = mock_hwmon_path
+    with patch.object(monitor, 'sys_root', mock_hwmon_path):
         temps = monitor.get_temperatures()
     
     # If the mock doesn't work perfectly, just test the real implementation
