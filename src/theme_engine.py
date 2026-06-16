@@ -144,7 +144,8 @@ class ThemeEngine(ABC):
                 with zipfile.ZipFile(archive, "r") as z:
                     # Check for path traversal attacks (zip bomb)
                     for member in z.namelist():
-                        if ".." in member or member.startswith("/"):
+                        # Only catch actual path traversal patterns
+                        if member.startswith("../") or member.startswith("..\\") or member.startswith("/"):
                             print(f"[ThemeEngine] Unsafe path in archive: {member}")
                             return None
                     z.extractall(dest_dir)
@@ -152,7 +153,8 @@ class ThemeEngine(ABC):
                 with tarfile.open(archive, "r:*") as t:
                     # Check for path traversal attacks
                     for member in t.getmembers():
-                        if ".." in member.name or member.name.startswith("/"):
+                        # Only catch actual path traversal patterns
+                        if member.name.startswith("../") or member.name.startswith("..\\") or member.name.startswith("/"):
                             print(f"[ThemeEngine] Unsafe path in archive: {member.name}")
                             return None
                     t.extractall(dest_dir)

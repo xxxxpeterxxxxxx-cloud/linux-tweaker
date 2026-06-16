@@ -31,13 +31,6 @@
         ]
       },
       "extensions": {
-        "user-theme@gnome-shell-extensions.gcampax.github.com": {
-          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
-          "schema": "org.gnome.shell.extensions.user-theme",
-          "settings": {
-            "name": "catppuccin-mocha-blue-standard+default"
-          }
-        },
         "dash-to-panel@jderose9.github.com": {
           "url": "https://github.com/home-sweet-gnome/dash-to-panel/releases/download/v60/dash-to-panel@jderose9.github.com_v60.zip",
           "schema": "org.gnome.shell.extensions.dash-to-panel",
@@ -59,12 +52,7 @@
           }
         }
       },
-      "layout": {
-        "org.gnome.shell.extensions.dash-to-dock": {
-          "dock-position": "LEFT",
-          "dash-max-icon-size": 48
-        }
-      }
+      "layout": {}
     },
     "kde": {
       "plasma-theme": "Catppuccin-Mocha-Blue",

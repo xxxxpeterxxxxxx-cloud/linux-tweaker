@@ -30,15 +30,7 @@
           "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
         ]
       },
-      "extensions": {
-        "user-theme@gnome-shell-extensions.gcampax.github.com": {
-          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
-          "schema": "org.gnome.shell.extensions.user-theme",
-          "settings": {
-            "name": "catppuccin-mocha-pink-standard+default"
-          }
-        }
-      },
+      "extensions": {},
       "layout": {}
     },
     "hyprland": {

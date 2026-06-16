@@ -31,13 +31,6 @@
         ]
       },
       "extensions": {
-        "user-theme@gnome-shell-extensions.gcampax.github.com": {
-          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
-          "schema": "org.gnome.shell.extensions.user-theme",
-          "settings": {
-            "name": "Orchis-Dark-Compact"
-          }
-        },
         "blur-my-shell@aunetx": {
           "url": "https://github.com/aunetx/blur-my-shell/releases/download/v62/blur-my-shell@aunetx.zip",
           "schema": "org.gnome.shell.extensions.blur-my-shell",
