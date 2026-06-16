@@ -3,44 +3,36 @@
   "description": "Nord color scheme optimized for focus",
   "themes": {
     "gtk": "Nordic",
-    "icon": "Nordic",
-    "cursor": "Vimix",
+    "icon": "Papirus-Dark",
+    "cursor": "Bibata-Modern-Classic",
     "font": "Fira Code 11"
   },
   "wallpaper": "https://w.wallhaven.cc/full/xj/xjwallhaven-xjdm7y.jpg",
   "settings": {
     "gnome": {
       "gtk-theme": "Nordic",
-      "icon-theme": "Nordic",
+      "icon-theme": "Papirus-Dark",
       "font-name": "Fira Code 11",
       "monospace-font": "Fira Code 11",
       "color-scheme": "prefer-dark",
       "shell-theme": "Nordic",
       "resources": {
-        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
-        "icon-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic-icons.tar.xz",
-        "shell-theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
+        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
+        "icon-url": "",
+        "shell-theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
         "fonts": [
           "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
         ]
       },
-      "extensions": {
-        "user-theme@gnome-shell-extensions.gcampax.github.com": {
-          "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
-          "schema": "org.gnome.shell.extensions.user-theme",
-          "settings": {
-            "name": "Nordic"
-          }
-        }
-      },
+      "extensions": {},
       "layout": {}
     },
     "kde": {
       "plasma-theme": "Nordic",
-      "icon-theme": "Nordic",
+      "icon-theme": "Papirus-Dark",
       "resources": {
-        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
-        "icon-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic-icons.tar.xz",
+        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
+        "icon-url": "",
         "fonts": [
           "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
         ]
@@ -51,9 +43,9 @@
       "waybar-style": "nordic",
       "rofi-theme": "nordic",
       "resources": {
-        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
-        "icon-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic-icons.tar.xz",
-        "cursor-url": "https://github.com/vinceliuice/Vimix-cursors/releases/download/v2022-03-21/Vimix-cursors.tar.xz",
+        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
+        "icon-url": "",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
         "waybar-style-url": "",
         "rofi-theme-url": "",
         "fonts": [
@@ -76,14 +68,14 @@
     },
     "xfce": {
       "gtk-theme": "Nordic",
-      "icon-theme": "Nordic",
-      "cursor-theme": "Vimix",
+      "icon-theme": "Papirus-Dark",
+      "cursor-theme": "Bibata-Modern-Classic",
       "font-name": "Fira Code 11",
       "monospace-font": "Fira Code 11",
       "resources": {
-        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic.tar.xz",
-        "icon-url": "https://github.com/EliverLara/Nordic/releases/download/v2.0.0/Nordic-icons.tar.xz",
-        "cursor-url": "https://github.com/vinceliuice/Vimix-cursors/releases/download/v2022-03-21/Vimix-cursors.tar.xz",
+        "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
+        "icon-url": "",
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
         "fonts": [
           "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
         ]

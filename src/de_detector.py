@@ -26,6 +26,12 @@ class DEDetector:
         "GNOME": "GnomeThemeEngine",
         "ubuntu:GNOME": "GnomeThemeEngine",
         "pop:GNOME": "GnomeThemeEngine",
+        "bluefin:GNOME": "GnomeThemeEngine",
+        "Bluefin": "GnomeThemeEngine",
+        "bluefin": "GnomeThemeEngine",
+        "Silverblue": "GnomeThemeEngine",
+        "silverblue": "GnomeThemeEngine",
+        "Fedora": "GnomeThemeEngine",
         "Cinnamon": "GnomeThemeEngine",
         "KDE": "PlasmaThemeEngine",
         "LXQt": "LxqtThemeEngine",
@@ -142,5 +148,9 @@ class DEDetector:
             return DEInfo(name="sway", type="WM", engine="SwayThemeEngine", detected_by="config")
         if (cfg / "i3" / "config").exists():
             return DEInfo(name="i3", type="WM", engine="I3ThemeEngine", detected_by="config")
+
+        # GNOME config detection (Bluefin, Silverblue, etc. when running in terminal)
+        if (cfg / "gnome" / "user").exists() or (cfg / "dconf" / "user").exists():
+            return DEInfo(name="GNOME", type="DE", engine="GnomeThemeEngine", detected_by="config")
 
         return None

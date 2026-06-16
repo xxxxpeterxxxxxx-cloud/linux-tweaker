@@ -92,3 +92,8 @@ logs/
 .env
 .env.local
 .env.*.local
+
+# VM files
+vm/
+*.qcow2
+*.qcow

@@ -5,6 +5,7 @@ Controls Plasma theming via kwriteconfig6 and CLI tools. No root required.
 
 import json
 import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 

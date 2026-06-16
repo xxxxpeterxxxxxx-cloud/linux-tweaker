@@ -17,9 +17,15 @@
       "color-scheme": "prefer-dark",
       "shell-theme": "Orchis-Purple-Dark",
       "resources": {
-        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-purple.tar.xz",
-        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-dracula.tar.xz",
-        "shell-theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-purple.tar.xz",
+        "theme-url": "",
+        "theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "theme-install-cmd": ["./install.sh", "-t", "purple", "-c", "dark", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "dracula"],
+        "shell-theme-url": "",
+        "shell-theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "shell-theme-install-cmd": ["./install.sh", "-t", "purple", "-c", "dark", "-d", "~/.themes"],
         "fonts": [
           "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
         ]
@@ -48,9 +54,13 @@
       "waybar-style": "violet",
       "rofi-theme": "violet",
       "resources": {
-        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-purple.tar.xz",
-        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-dracula.tar.xz",
-        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Classic.tar.xz",
+        "theme-url": "",
+        "theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "theme-install-cmd": ["./install.sh", "-t", "purple", "-c", "dark", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "dracula"],
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
         "waybar-style-url": "",
         "rofi-theme-url": "",
         "fonts": [

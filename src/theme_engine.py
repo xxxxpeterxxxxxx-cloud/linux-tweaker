@@ -89,9 +89,12 @@ class ThemeEngine(ABC):
                 changes.append({"key": key, "current": current, "new": new_value})
         return changes
 
-    def _run(self, cmd: List[str], check: bool = True) -> subprocess.CompletedProcess:
+    def _run(self, cmd: List[str], check: bool = True, cwd: Optional[str] = None) -> subprocess.CompletedProcess:
         """Run a shell command safely."""
-        return subprocess.run(cmd, capture_output=True, text=True, check=check)
+        kwargs = {"capture_output": True, "text": True, "check": check}
+        if cwd:
+            kwargs["cwd"] = cwd
+        return subprocess.run(cmd, **kwargs)
 
     def _download_file(self, url: str, dest: Path) -> bool:
         """Download a file via curl or wget. Returns True on success."""
@@ -102,12 +105,17 @@ class ThemeEngine(ABC):
             return False
         
         dest.parent.mkdir(parents=True, exist_ok=True)
-        for downloader in (["curl", "-fsSL", "-o", str(dest), url],
-                           ["wget", "-q", "-O", str(dest), url]):
+        # Add user-agent to avoid GitHub rate limiting
+        user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        for downloader in (["curl", "-fsSL", "-A", user_agent, "-o", str(dest), url],
+                           ["wget", "-q", "-U", user_agent, "-O", str(dest), url]):
             try:
-                self._run(downloader, check=False)
+                result = self._run(downloader, check=False)
                 if dest.exists() and dest.stat().st_size > 1024:
                     return True
+                # If download failed but file exists (partial), remove it
+                if dest.exists():
+                    dest.unlink()
             except FileNotFoundError:
                 continue
         return False
@@ -158,6 +166,98 @@ class ThemeEngine(ABC):
             if item.is_dir():
                 return item
         return dest_dir
+
+    def _install_theme_from_repo(self, name: str, repo_url: str, install_cmd: List[str], dest_dir: Path) -> bool:
+        """Download repo tarball and run an install script to install a theme."""
+        import os
+        dest = dest_dir / name
+        if dest.exists():
+            print(f"  -> {name} already installed")
+            return True
+        # Derive tarball URL from repo URL
+        tarball_url = repo_url.replace("https://github.com/", "https://github.com/") + "/archive/refs/heads/main.tar.gz"
+        tmp_dir = self.backup_dir / f"repo_{name}_tmp"
+        archive = self.backup_dir / f"repo_{name}.tar.gz"
+        if tmp_dir.exists():
+            shutil.rmtree(tmp_dir)
+        print(f"  -> Downloading {name} source...")
+        if not self._download_file(tarball_url, archive):
+            # Fallback to master branch
+            tarball_url = repo_url + "/archive/refs/heads/master.tar.gz"
+            if not self._download_file(tarball_url, archive):
+                print(f"  -> [ERROR] Failed to download source from {repo_url}")
+                return False
+        extracted = self._extract_archive(archive, tmp_dir)
+        if not extracted:
+            print(f"  -> [ERROR] Failed to extract source archive")
+            return False
+        # The extracted dir is the top-level repo dir
+        src_dir = extracted
+        # Try pre-built release archives first (fast path)
+        release_dir = src_dir / "release"
+        if release_dir.exists():
+            # Find a matching .tar.xz file
+            base_name = name.split("-")[0]  # e.g. "Orchis-Green-Dark" -> "Orchis"
+            # Try to match the color variant specifically
+            color_part = name.split("-")[1].lower() if "-" in name else ""  # "green" from "Orchis-Green-Dark"
+            matched = False
+            for archive in release_dir.glob("*.tar.xz"):
+                archive_name_lower = archive.name.lower()
+                # Check if base name AND color part match
+                if base_name.lower() in archive_name_lower and (color_part in archive_name_lower or not color_part):
+                    print(f"  -> Installing pre-built {archive.name}...")
+                    try:
+                        with tarfile.open(archive, "r:*") as t:
+                            t.extractall(dest_dir)
+                        if (dest_dir / name).exists():
+                            print(f"  -> {name} installed from release archive")
+                            return True
+                    except (tarfile.TarError, OSError) as e:
+                        print(f"  -> [WARN] Failed to extract release archive: {e}")
+                    matched = True
+                    break
+            # Fallback: try to match just the base name (e.g., "Orchis.tar.xz" for "Orchis-Blue-Dark")
+            if not matched:
+                for archive in release_dir.glob("*.tar.xz"):
+                    # Handle .tar.xz double extension
+                    archive_stem = archive.stem.lower()
+                    if archive_stem.endswith(".tar"):
+                        archive_stem = archive_stem[:-4]  # Remove ".tar" suffix
+                    if archive_stem == base_name.lower():
+                        print(f"  -> Installing pre-built {archive.name} (fallback)...")
+                        try:
+                            with tarfile.open(archive, "r:*") as t:
+                                t.extractall(dest_dir)
+                            if (dest_dir / name).exists():
+                                print(f"  -> {name} installed from release archive")
+                                return True
+                        except (tarfile.TarError, OSError) as e:
+                            print(f"  -> [WARN] Failed to extract release archive: {e}")
+                        matched = True
+                        break
+            if not matched:
+                print(f"  -> No matching release archive found, will use install script")
+            elif not (dest_dir / name).exists():
+                # Archive extracted but specific theme name not found, try install script
+                print(f"  -> Release archive extracted but '{name}' not found, trying install script...")
+                matched = False
+        # Expand ~ in install command args
+        expanded_cmd = [os.path.expanduser(arg) for arg in install_cmd]
+        print(f"  -> Running install script for {name}...")
+        r = self._run(expanded_cmd, check=False, cwd=str(src_dir))
+        if r.returncode != 0:
+            print(f"  -> [WARN] Install script may have had issues, checking if theme exists...")
+        # Verify the theme was installed
+        if dest.exists():
+            print(f"  -> {name} installed from repo")
+            return True
+        # Also check common install locations
+        for alt_dir in [Path.home() / ".themes", Path.home() / ".icons", Path.home() / ".local/share/icons", Path.home() / ".local/share/themes"]:
+            if (alt_dir / name).exists():
+                print(f"  -> {name} installed to {alt_dir}")
+                return True
+        print(f"  -> [WARN] Could not verify {name} installation")
+        return False
 
     def _install_fonts(self, font_urls: List[str], dest_dir: Path) -> int:
         """Download fonts (or font archives) and install to ~/.local/share/fonts/. Returns count installed."""
@@ -213,12 +313,17 @@ class ThemeEngine(ABC):
         if dest.exists():
             print(f"  -> {asset_type.capitalize()} '{name}' already installed")
             return True
-        archive = self.backup_dir / f"{asset_type}_{name}.zip"
+        # Preserve original file extension from URL
+        url_path = url.split("?")[0]
+        suffix = Path(url_path).suffix or ".zip"
+        archive = self.backup_dir / f"{asset_type}_{name}{suffix}"
         if not self._download_file(url, archive):
+            print(f"  -> [ERROR] Failed to download {asset_type} from {url}")
             return False
         tmp_dir = self.backup_dir / f"{asset_type}_{name}_tmp"
         extracted = self._extract_archive(archive, tmp_dir)
         if not extracted:
+            print(f"  -> [ERROR] Failed to extract {asset_type} archive")
             return False
         try:
             if extracted != dest:

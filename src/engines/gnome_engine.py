@@ -6,6 +6,7 @@ GNOME Shell layout via gsettings. No root required.
 
 import json
 import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
@@ -87,9 +88,13 @@ class GnomeThemeEngine(ThemeEngine):
             print(f"  -> Extension '{uuid}' already installed")
             self._enable_extension(uuid)
             return True
+        # Skip if no URL provided
+        if not url:
+            print(f"  -> Extension '{uuid}' has no download URL, skipping")
+            return False
         archive = self.backup_dir / f"ext_{uuid}.zip"
         if not self._download_file(url, archive):
-            print(f"  -> Failed to download extension {uuid}")
+            print(f"  -> Failed to download extension {uuid} (will skip)")
             return False
         ext_dir.mkdir(parents=True, exist_ok=True)
         try:
@@ -121,7 +126,14 @@ class GnomeThemeEngine(ThemeEngine):
 
     def _set_shell_theme(self, name: str):
         """Set shell theme via User Themes extension."""
-        self._gset(f"{self.SCHEMA_EXTENSIONS}.user-theme", "name", name)
+        try:
+            result = self._run(["gsettings", "get", f"{self.SCHEMA_EXTENSIONS}.user-theme", "name"], check=False)
+            if result.returncode == 0:
+                self._gset(f"{self.SCHEMA_EXTENSIONS}.user-theme", "name", name)
+            else:
+                print(f"  -> [INFO] User Themes extension not installed — skipping shell theme")
+        except (subprocess.SubprocessError, FileNotFoundError):
+            print(f"  -> [INFO] User Themes extension not available — skipping shell theme")
 
     # ── Preset application ────────────────────────────────────────────
 
@@ -143,20 +155,54 @@ class GnomeThemeEngine(ThemeEngine):
         # 2. Install icon theme
         icon_name = preset.themes.get("icon") or preset.get_setting("gnome.icon-theme")
         icon_url = resources.get("icon-url", "")
-        if icon_name and icon_url:
-            self._install_icon_theme(icon_name, icon_url)
+        icon_repo = resources.get("icon-repo", "")
+        icon_install = resources.get("icon-install-cmd", [])
+        if icon_name:
+            installed = False
+            if icon_url:
+                installed = self._install_icon_theme(icon_name, icon_url)
+            if not installed and icon_repo and icon_install:
+                installed = self._install_theme_from_repo(icon_name, icon_repo, icon_install, self.icons_dir)
+            if installed:
+                print(f"  -> Icon theme installed: {icon_name}")
+            elif icon_url or icon_repo:
+                print(f"  -> [WARN] Failed to install icon theme '{icon_name}' — will use system theme if available")
+            else:
+                print(f"  -> Icon theme '{icon_name}' (system — no download URL)")
 
         # 3. Install GTK theme
         gtk = preset.themes.get("gtk") or preset.get_setting("gnome.gtk-theme")
         theme_url = resources.get("theme-url", "")
-        if gtk and theme_url:
-            self._install_theme(gtk, theme_url)
+        theme_repo = resources.get("theme-repo", "")
+        theme_install = resources.get("theme-install-cmd", [])
+        if gtk:
+            installed = False
+            if theme_url:
+                installed = self._install_theme(gtk, theme_url)
+            if not installed and theme_repo and theme_install:
+                installed = self._install_theme_from_repo(gtk, theme_repo, theme_install, self.themes_dir)
+            if installed:
+                print(f"  -> GTK theme installed: {gtk}")
+            elif theme_url or theme_repo:
+                print(f"  -> [WARN] Failed to install GTK theme '{gtk}' — will use system theme if available")
+            else:
+                print(f"  -> GTK theme '{gtk}' (system — no download URL)")
 
         # 4. Install shell theme
         shell_theme = preset.get_setting("gnome.shell-theme")
         shell_url = resources.get("shell-theme-url", "")
-        if shell_theme and shell_url:
-            self._install_shell_theme(shell_theme, shell_url)
+        shell_repo = resources.get("shell-theme-repo", "")
+        shell_install = resources.get("shell-theme-install-cmd", [])
+        if shell_theme:
+            installed = False
+            if shell_url:
+                installed = self._install_shell_theme(shell_theme, shell_url)
+            if not installed and shell_repo and shell_install:
+                installed = self._install_theme_from_repo(shell_theme, shell_repo, shell_install, self.themes_dir)
+            if installed:
+                print(f"  -> Shell theme installed: {shell_theme}")
+            elif shell_url or shell_repo:
+                print(f"  -> [WARN] Failed to install shell theme '{shell_theme}'")
             self._set_shell_theme(shell_theme)
 
         # 5. Apply gsettings (don't fail entire preset on individual errors)
@@ -171,15 +217,16 @@ class GnomeThemeEngine(ThemeEngine):
             print("  -> Installing extensions ...")
             for uuid, info in extensions.items():
                 url = info.get("url", "") if isinstance(info, dict) else info
-                self._install_extension(uuid, url)
-                # Configure extension settings if provided (resilient)
-                if isinstance(info, dict) and "settings" in info:
-                    ext_schema = f"{self.SCHEMA_EXTENSIONS}.{uuid.replace('@', '_').replace('.', '_')}" if "schema" not in info else info["schema"]
-                    for skey, sval in info["settings"].items():
-                        try:
-                            self._gset(ext_schema, skey, str(sval))
-                        except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
-                            print(f"  -> Skipped {skey} for {uuid}: {e}")
+                if self._install_extension(uuid, url):
+                    # Configure extension settings if provided (resilient)
+                    if isinstance(info, dict) and "settings" in info:
+                        ext_schema = f"{self.SCHEMA_EXTENSIONS}.{uuid.replace('@', '_').replace('.', '_')}" if "schema" not in info else info["schema"]
+                        for skey, sval in info["settings"].items():
+                            try:
+                                if not self._gset(ext_schema, skey, str(sval)):
+                                    print(f"  -> Skipped {skey} for {uuid} (schema may not exist)")
+                            except (subprocess.SubprocessError, FileNotFoundError, OSError) as e:
+                                print(f"  -> Skipped {skey} for {uuid}: {e}")
 
         # 7. Configure layout (dock, panel, etc.)
         if layout:
@@ -193,7 +240,6 @@ class GnomeThemeEngine(ThemeEngine):
             self._apply_wallpaper(preset.wallpaper)
 
         print(f"\n[GNOME] Done. Backup ID: {backup_id}")
-        print("[GNOME] NOTE: Some changes require a logout/login to take full effect.")
         return ok
 
     def _collect_keys(self, preset: Preset) -> List[tuple]:

@@ -2,7 +2,7 @@
   "name": "Retro Pixel",
   "description": "Neon cyber-retro with hot pink and cyan accents, matrix rain vibes, pixel art friendly.",
   "themes": {
-    "gtk": "Catppuccin-Mocha-Pink",
+    "gtk": "catppuccin-mocha-pink-standard+default",
     "icon": "Tela-circle-dracula",
     "cursor": "Bibata-Modern-Ice",
     "font": "JetBrains Mono 11"
@@ -10,16 +10,22 @@
   "wallpaper": "https://w.wallhaven.cc/full/l8/wallhaven-l8r6mq.jpg",
   "settings": {
     "gnome": {
-      "gtk-theme": "Catppuccin-Mocha-Pink",
+      "gtk-theme": "catppuccin-mocha-pink-standard+default",
       "icon-theme": "Tela-circle-dracula",
       "font-name": "JetBrains Mono 11",
       "monospace-font": "JetBrains Mono 11",
       "color-scheme": "prefer-dark",
-      "shell-theme": "Catppuccin-Mocha-Pink",
+      "shell-theme": "catppuccin-mocha-pink-standard+default",
       "resources": {
-        "theme-url": "https://github.com/catppuccin/gtk/releases/download/v0.7.5/Catppuccin-Mocha-Pink.zip",
-        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-dracula.tar.xz",
-        "shell-theme-url": "https://github.com/catppuccin/gnome-shell-theme/archive/refs/heads/main.zip",
+        "theme-url": "",
+        "theme-repo": "https://github.com/catppuccin/gtk",
+        "theme-install-cmd": ["python3", "install.py", "mocha", "pink", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "dracula"],
+        "shell-theme-url": "",
+        "shell-theme-repo": "https://github.com/catppuccin/gtk",
+        "shell-theme-install-cmd": ["python3", "install.py", "mocha", "pink", "-d", "~/.themes"],
         "fonts": [
           "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
         ]
@@ -29,20 +35,24 @@
           "url": "https://extensions.gnome.org/download-extension/user-theme@gnome-shell-extensions.gcampax.github.com.shell-extension.zip",
           "schema": "org.gnome.shell.extensions.user-theme",
           "settings": {
-            "name": "Catppuccin-Mocha-Pink"
+            "name": "catppuccin-mocha-pink-standard+default"
           }
         }
       },
       "layout": {}
     },
     "hyprland": {
-      "gtk-theme": "Catppuccin-Mocha-Pink",
+      "gtk-theme": "catppuccin-mocha-pink-standard+default",
       "waybar-style": "retro",
       "rofi-theme": "retro",
       "resources": {
-        "theme-url": "https://github.com/catppuccin/gtk/releases/download/v0.7.5/Catppuccin-Mocha-Pink.zip",
-        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-dracula.tar.xz",
-        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Ice.tar.xz",
+        "theme-url": "",
+        "theme-repo": "https://github.com/catppuccin/gtk",
+        "theme-install-cmd": ["python3", "install.py", "mocha", "pink", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "dracula"],
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Ice.tar.xz",
         "waybar-style-url": "",
         "rofi-theme-url": "",
         "fonts": [

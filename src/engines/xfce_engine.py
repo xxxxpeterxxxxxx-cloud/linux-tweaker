@@ -5,6 +5,7 @@ Controls theming via xfconf-query. No root required.
 
 import json
 import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 

@@ -17,9 +17,15 @@
       "color-scheme": "prefer-dark",
       "shell-theme": "Orchis-Green-Dark",
       "resources": {
-        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
-        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-green.tar.xz",
-        "shell-theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
+        "theme-url": "",
+        "theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "theme-install-cmd": ["./install.sh", "-t", "green", "-c", "dark", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "green"],
+        "shell-theme-url": "",
+        "shell-theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "shell-theme-install-cmd": ["./install.sh", "-t", "green", "-c", "dark", "-d", "~/.themes"],
         "fonts": [
           "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
         ]
@@ -56,8 +62,12 @@
       "plasma-theme": "Orchis-Green-Dark",
       "icon-theme": "Tela-circle-green",
       "resources": {
-        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
-        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-green.tar.xz",
+        "theme-url": "",
+        "theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "theme-install-cmd": ["./install.sh", "-t", "green", "-c", "dark", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "green"],
         "fonts": [
           "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
         ]
@@ -68,9 +78,13 @@
       "waybar-style": "lime-glass",
       "rofi-theme": "lime-glass",
       "resources": {
-        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
-        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-green.tar.xz",
-        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Classic.tar.xz",
+        "theme-url": "",
+        "theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "theme-install-cmd": ["./install.sh", "-t", "green", "-c", "dark", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "green"],
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
         "waybar-style-url": "",
         "rofi-theme-url": "",
         "fonts": [
@@ -98,9 +112,13 @@
       "font-name": "Inter 11",
       "monospace-font": "JetBrains Mono 11",
       "resources": {
-        "theme-url": "https://github.com/vinceliuice/Orchis-theme/releases/download/2024-05-01/Orchis-green.tar.xz",
-        "icon-url": "https://github.com/vinceliuice/Tela-circle-icon-theme/releases/download/2024-01-01/01-Tela-circle-green.tar.xz",
-        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.9.7/Bibata-Modern-Classic.tar.xz",
+        "theme-url": "",
+        "theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "theme-install-cmd": ["./install.sh", "-t", "green", "-c", "dark", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "green"],
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
         "fonts": [
           "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
         ]
