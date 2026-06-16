@@ -81,6 +81,10 @@ class GnomeThemeEngine(ThemeEngine):
         """Download and install a GNOME Shell theme. Requires User Themes extension."""
         return self._install_theme_asset(name, url, self.themes_dir, "shell")
 
+    def _install_cursor_theme(self, name: str, url: str) -> bool:
+        """Download and install a cursor theme to ~/.local/share/icons/."""
+        return self._install_theme_asset(name, url, self.icons_dir, "cursor")
+
     def _install_extension(self, uuid: str, url: str) -> bool:
         """Download and install a GNOME Shell extension zip to ~/.local/share/gnome-shell/extensions/."""
         ext_dir = self.extensions_dir / uuid
@@ -188,6 +192,18 @@ class GnomeThemeEngine(ThemeEngine):
             else:
                 print(f"  -> GTK theme '{gtk}' (system — no download URL)")
 
+        # 3.5. Install cursor theme
+        cursor = preset.themes.get("cursor") or preset.get_setting("gnome.cursor-theme")
+        cursor_url = resources.get("cursor-url", "")
+        if cursor and cursor_url:
+            installed = self._install_cursor_theme(cursor, cursor_url)
+            if installed:
+                print(f"  -> Cursor theme installed: {cursor}")
+            else:
+                print(f"  -> [WARN] Failed to install cursor theme '{cursor}'")
+        elif cursor:
+            print(f"  -> Cursor theme '{cursor}' (system — no download URL)")
+
         # 4. Install shell theme
         shell_theme = preset.get_setting("gnome.shell-theme")
         shell_url = resources.get("shell-theme-url", "")
@@ -249,15 +265,27 @@ class GnomeThemeEngine(ThemeEngine):
 
         gtk = themes.get("gtk") or preset.get_setting("gnome.gtk-theme")
         if gtk:
-            keys.append((self.SCHEMA_INTERFACE, "gtk-theme", gtk, "GTK Theme"))
+            # Verify theme exists before applying
+            if (self.themes_dir / gtk).exists() or (Path.home() / ".local/share/themes" / gtk).exists():
+                keys.append((self.SCHEMA_INTERFACE, "gtk-theme", gtk, "GTK Theme"))
+            else:
+                print(f"  -> [WARN] GTK theme '{gtk}' not found, skipping")
 
         icon = themes.get("icon") or preset.get_setting("gnome.icon-theme")
         if icon:
-            keys.append((self.SCHEMA_INTERFACE, "icon-theme", icon, "Icon Theme"))
+            # Verify icon theme exists before applying
+            if (self.icons_dir / icon).exists() or (Path.home() / ".local/share/icons" / icon).exists():
+                keys.append((self.SCHEMA_INTERFACE, "icon-theme", icon, "Icon Theme"))
+            else:
+                print(f"  -> [WARN] Icon theme '{icon}' not found, skipping")
 
         cursor = themes.get("cursor") or preset.get_setting("gnome.cursor-theme")
         if cursor:
-            keys.append((self.SCHEMA_INTERFACE, "cursor-theme", cursor, "Cursor Theme"))
+            # Verify cursor theme exists before applying
+            if (self.icons_dir / cursor).exists() or (Path.home() / ".local/share/icons" / cursor).exists():
+                keys.append((self.SCHEMA_INTERFACE, "cursor-theme", cursor, "Cursor Theme"))
+            else:
+                print(f"  -> [WARN] Cursor theme '{cursor}' not found, skipping")
 
         font = themes.get("font") or preset.get_setting("gnome.font-name")
         if font:

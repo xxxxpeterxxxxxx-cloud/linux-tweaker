@@ -23,6 +23,7 @@
         "icon-url": "",
         "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
         "icon-install-cmd": ["./install.sh", "dracula"],
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Ice.tar.xz",
         "shell-theme-url": "",
         "shell-theme-repo": "https://github.com/catppuccin/gtk",
         "shell-theme-install-cmd": ["python3", "install.py", "mocha", "pink", "-d", "~/.themes"],

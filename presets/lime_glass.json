@@ -23,6 +23,7 @@
         "icon-url": "",
         "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
         "icon-install-cmd": ["./install.sh", "green"],
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
         "shell-theme-url": "",
         "shell-theme-repo": "https://github.com/vinceliuice/Orchis-theme",
         "shell-theme-install-cmd": ["./install.sh", "-t", "green", "-c", "dark", "-d", "~/.themes"],

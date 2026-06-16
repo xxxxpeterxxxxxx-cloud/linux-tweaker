@@ -19,8 +19,9 @@
       "resources": {
         "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
         "icon-url": "",
-        "icon-repo": "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
-        "icon-install-cmd": ["./install.sh", "--theme", "Papirus-Dark"],
+        "icon-repo": "",
+        "icon-install-cmd": [],
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
         "shell-theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
         "fonts": [
           "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
@@ -35,8 +36,8 @@
       "resources": {
         "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
         "icon-url": "",
-        "icon-repo": "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme",
-        "icon-install-cmd": ["./install.sh", "--theme", "Papirus-Dark"],
+        "icon-repo": "",
+        "icon-install-cmd": [],
         "fonts": [
           "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
         ]
