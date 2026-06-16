@@ -71,6 +71,10 @@ class HyprlandThemeEngine(ThemeEngine):
     def _install_icon_theme(self, name: str, url: str) -> bool:
         return self._install_theme_asset(name, url, self.icons_dir, "hypr_icons")
 
+    def _install_cursor_theme(self, name: str, url: str) -> bool:
+        """Download and install a cursor theme to ~/.local/share/icons/."""
+        return self._install_theme_asset(name, url, self.icons_dir, "hypr_cursor")
+
     def _replace_line(self, path: Path, key: str, new_value: str):
         """Replace a key=value line in Hyprland config. Handles block syntax like general:border_size."""
         if not path.exists():

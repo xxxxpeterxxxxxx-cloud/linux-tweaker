@@ -58,6 +58,36 @@
         }
       },
       "layout": {}
+    },
+    "hyprland": {
+      "gtk-theme": "Orchis-Purple-Dark",
+      "waybar-style": "purple-elegance",
+      "rofi-theme": "purple-elegance",
+      "resources": {
+        "theme-url": "",
+        "theme-repo": "https://github.com/vinceliuice/Orchis-theme",
+        "theme-install-cmd": ["./install.sh", "-t", "purple", "-c", "dark", "-d", "~/.themes"],
+        "icon-url": "",
+        "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
+        "icon-install-cmd": ["./install.sh", "purple"],
+        "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
+        "fonts": [
+          "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
+        ]
+      },
+      "theme": {
+        "general:border_size": 2,
+        "general:gaps_in": 4,
+        "general:gaps_out": 8,
+        "general:col.active_border": "0xffbd93f9",
+        "general:col.inactive_border": "0xff313244",
+        "decoration:rounding": 6,
+        "decoration:blur:enabled": true,
+        "decoration:blur:size": 4,
+        "decoration:blur:passes": 2,
+        "decoration:active_opacity": 0.95,
+        "decoration:inactive_opacity": 0.85
+      }
     }
   }
 }
