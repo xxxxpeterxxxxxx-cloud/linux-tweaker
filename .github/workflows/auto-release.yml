@@ -9,6 +9,8 @@ jobs:
   auto-release:
     runs-on: ubuntu-latest
     if: "!startsWith(github.event.head_commit.message, '[skip ci]')"
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,16 +42,12 @@ jobs:
           git push origin "${{ steps.bump.outputs.new_tag }}"
 
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.bump.outputs.new_tag }}
-          release_name: Release ${{ steps.bump.outputs.new_tag }}
-          body: |
-            ## Changes in this release
+        run: |
+          gh release create "${{ steps.bump.outputs.new_tag }}" \
+            --title "Release ${{ steps.bump.outputs.new_tag }}" \
+            --notes "## Changes in this release
             ${{ github.event.head_commit.message }}
             
-            Auto-generated release from commit ${{ github.sha }}
-          draft: false
-          prerelease: false
+            Auto-generated release from commit ${{ github.sha }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
