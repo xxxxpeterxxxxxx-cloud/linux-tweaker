@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-06-17
+
+### Added
+- Complete architectural rewrite with modular class-based design
+- SystemChecker class for robust system validation (write permissions, WM detection, dependency checking)
+- FileManager class with automatic backup/restore functionality
+- UIBuilder class for beautiful TUI menu system with rich library integration
+- Zero-crash policy with try/except blocks on all operations
+- User-space only operations (no sudo/root required)
+- Hierarchical menu system with navigation support
+- Error collection and graceful error reporting
+- Backup history tracking and management
+- Interactive CLI with confirmation dialogs
+
+### Changed
+- Migrated from monolithic main.py to modular architecture (SystemChecker, FileManager, UIBuilder)
+- Improved error handling throughout the application
+- Enhanced dependency checking with shutil.which fallback
+- Better separation of concerns between system checks, file operations, and UI
+
+### Fixed
+- Module import issues with proper path handling
+- Dependency status display with enum comparison
+- File operations now properly handle all edge cases
+
+### Removed
+- Legacy monolithic code structure (replaced with modular classes)
+
 ## [1.4.0] - 2026-06-17
 
 ### Added
