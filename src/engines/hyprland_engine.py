@@ -676,17 +676,13 @@ element selected {{
         theme_file.write_text(theme_content)
         
         # Create config.rasi that references the theme
+        # Single configuration block with drun as default mode
         config_content = f"""configuration {{
     modi: "drun,run,window";
     show-icons: true;
     icon-theme: "Papirus";
 }}
 @theme "{theme_file}"
-
-// Default mode when launched without arguments
-configuration {{
-    modi: "drun";
-}}
 """
         rofi_cfg.write_text(config_content)
         print(f"  -> Rofi glassmorphism theme applied: {theme}")
