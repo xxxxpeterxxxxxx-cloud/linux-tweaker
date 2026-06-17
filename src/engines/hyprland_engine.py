@@ -7,11 +7,19 @@ import json
 import shutil
 import subprocess
 import sys
+import traceback
 from datetime import datetime
 from pathlib import Path
 
 from theme_engine import Preset, PreviewResult, ThemeEngine
 from version import __version__
+
+try:
+    from rich.console import Console
+    from rich.table import Table
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
 
 
 class HyprlandThemeEngine(ThemeEngine):
@@ -1195,14 +1203,15 @@ exec-once = swww init || true
             return True
         except Exception as e:
             print(f"\n[{self.wm.title()}] ERROR: {e}", flush=True)
-            import traceback
             traceback.print_exc()
             sys.stdout.flush()
             return False
 
     def preview_preset(self, preset: Preset) -> PreviewResult:
-        from rich.console import Console
-        from rich.table import Table
+        if not RICH_AVAILABLE:
+            print(f"{self.wm.title()} Preview: {preset.name}")
+            print("Rich library not available for table display")
+            return PreviewResult(changes=[], confirmed=False)
 
         console = Console()
         table = Table(title=f"{self.wm.title()} Preview: {preset.name}")

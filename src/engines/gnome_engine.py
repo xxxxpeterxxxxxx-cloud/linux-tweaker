@@ -13,6 +13,13 @@ from typing import Dict, List
 
 from theme_engine import Preset, PreviewResult, ThemeEngine
 
+try:
+    from rich.console import Console
+    from rich.table import Table
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
+
 
 class GnomeThemeEngine(ThemeEngine):
     """Theme engine for GNOME. Installs extensions, themes, icons, fonts, and configures layout."""
@@ -317,8 +324,10 @@ class GnomeThemeEngine(ThemeEngine):
             print(f"  -> Wallpaper: {url}")
 
     def preview_preset(self, preset: Preset) -> PreviewResult:
-        from rich.console import Console
-        from rich.table import Table
+        if not RICH_AVAILABLE:
+            print(f"GNOME Preview: {preset.name}")
+            print("Rich library not available for table display")
+            return PreviewResult(changes=[], confirmed=False)
 
         console = Console()
         table = Table(title=f"GNOME Preview: {preset.name}")

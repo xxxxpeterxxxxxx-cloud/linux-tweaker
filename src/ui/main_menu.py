@@ -3,7 +3,9 @@ Main Menu UI
 Rich TUI for Linux Tweaker
 """
 
+import shutil
 import sys
+from pathlib import Path
 from typing import Dict
 
 from rich.console import Console
@@ -251,8 +253,6 @@ class MainMenu:
     
     def _show_backups(self):
         """Show available backups."""
-        from pathlib import Path
-
         backup_dir = Path.home() / ".config" / "linux-tweaker" / "backups"
 
         self.console.print(f"\n[bold magenta]╔═══════════════════════════════════════╗[/bold magenta]")
@@ -308,7 +308,6 @@ class MainMenu:
 
     def _health_check(self):
         """Run a system health check for ricing dependencies."""
-        import shutil
         self.console.print(f"\n[bold cyan]╔═══════════════════════════════════════╗[/bold cyan]")
         self.console.print(f"[bold cyan]║           HEALTH CHECK                ║[/bold cyan]")
         self.console.print(f"[bold cyan]╚═══════════════════════════════════════╝[/bold cyan]\n")

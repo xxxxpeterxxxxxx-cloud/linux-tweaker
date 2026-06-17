@@ -11,6 +11,13 @@ from pathlib import Path
 
 from theme_engine import Preset, PreviewResult, ThemeEngine
 
+try:
+    from rich.console import Console
+    from rich.table import Table
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
+
 
 class PlasmaThemeEngine(ThemeEngine):
     """Theme engine for KDE Plasma 5 and 6."""
@@ -193,8 +200,10 @@ class PlasmaThemeEngine(ThemeEngine):
         return ok
 
     def preview_preset(self, preset: Preset) -> PreviewResult:
-        from rich.console import Console
-        from rich.table import Table
+        if not RICH_AVAILABLE:
+            print(f"Plasma Preview: {preset.name}")
+            print("Rich library not available for table display")
+            return PreviewResult(changes=[], confirmed=False)
 
         console = Console()
         table = Table(title=f"Plasma Preview: {preset.name}")
