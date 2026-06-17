@@ -55,8 +55,6 @@
         "icon-repo": "https://github.com/vinceliuice/Tela-circle-icon-theme",
         "icon-install-cmd": ["./install.sh", "dracula"],
         "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
-        "waybar-style-url": "",
-        "rofi-theme-url": "",
         "fonts": [
           "https://github.com/rsms/inter/releases/download/v4.0/Inter-4.0.zip"
         ]

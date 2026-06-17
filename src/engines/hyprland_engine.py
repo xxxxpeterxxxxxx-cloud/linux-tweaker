@@ -75,6 +75,42 @@ class HyprlandThemeEngine(ThemeEngine):
         """Download and install a cursor theme to ~/.local/share/icons/."""
         return self._install_theme_asset(name, url, self.icons_dir, "hypr_cursor")
 
+    def _install_theme_from_repo(self, name: str, repo_url: str, install_cmd: list, dest_dir: Path) -> bool:
+        """Clone a theme repo and run install script interactively."""
+        repo_name = repo_url.rstrip("/").split("/")[-1].replace(".git", "")
+        clone_dir = self.backup_dir / f"repo_{name}_tmp"
+        if clone_dir.exists():
+            shutil.rmtree(clone_dir)
+        print(f"  -> Downloading {name} source...")
+        r = self._run(["git", "clone", "--depth", "1", repo_url, str(clone_dir)], check=False)
+        if r.returncode != 0:
+            print(f"  -> Failed to clone {repo_url}")
+            if r.stderr:
+                print(f"  -> Error: {r.stderr.strip()}")
+            return False
+        print(f"  -> Running install script for {name}...")
+        # Handle interpreter + script commands (e.g., "python3 install.py ...")
+        interpreters = {"python3", "python", "bash", "sh"}
+        if install_cmd[0] in interpreters and len(install_cmd) > 1:
+            install_script = clone_dir / install_cmd[1]
+            cmd_to_run = install_cmd
+        else:
+            install_script = clone_dir / install_cmd[0]
+            cmd_to_run = install_cmd
+        if not install_script.exists():
+            print(f"  -> Install script not found: {install_script.name}")
+            return False
+        # Make script executable
+        install_script.chmod(0o755)
+        # Run install script interactively so user can answer prompts
+        result = subprocess.run(cmd_to_run, cwd=str(clone_dir))
+        if result.returncode == 0:
+            print(f"  -> {name} installed to {dest_dir}")
+            return True
+        else:
+            print(f"  -> Failed to install {name}")
+            return False
+
     def _replace_line(self, path: Path, key: str, new_value: str):
         """Replace a key=value line in Hyprland config. Handles block syntax like general:border_size."""
         if not path.exists():
@@ -804,20 +840,50 @@ exec-once = swww init || true
             # 2. Install icon theme
             icon = preset.themes.get("icon")
             icon_url = resources.get("icon-url", "")
-            if icon and icon_url:
-                self._install_icon_theme(icon, icon_url)
+            icon_repo = resources.get("icon-repo", "")
+            icon_install = resources.get("icon-install-cmd", [])
+            if icon:
+                installed = False
+                if icon_url:
+                    installed = self._install_icon_theme(icon, icon_url)
+                if not installed and icon_repo and icon_install:
+                    installed = self._install_theme_from_repo(icon, icon_repo, icon_install, self.icons_dir)
+                if installed:
+                    print(f"  -> Icon theme installed: {icon}")
+                elif icon_url or icon_repo:
+                    print(f"  -> [WARN] Failed to install icon theme '{icon}' — will use system theme if available")
+                else:
+                    print(f"  -> Icon theme '{icon}' (system — no download URL)")
 
             # 3. Install GTK theme
             gtk = preset.themes.get("gtk") or preset.get_setting("hyprland.gtk-theme")
             theme_url = resources.get("theme-url", "")
-            if gtk and theme_url:
-                self._install_theme(gtk, theme_url)
+            theme_repo = resources.get("theme-repo", "")
+            theme_install = resources.get("theme-install-cmd", [])
+            if gtk:
+                installed = False
+                if theme_url:
+                    installed = self._install_theme(gtk, theme_url)
+                if not installed and theme_repo and theme_install:
+                    installed = self._install_theme_from_repo(gtk, theme_repo, theme_install, self.themes_dir)
+                if installed:
+                    print(f"  -> GTK theme installed: {gtk}")
+                elif theme_url or theme_repo:
+                    print(f"  -> [WARN] Failed to install GTK theme '{gtk}' — will use system theme if available")
+                else:
+                    print(f"  -> GTK theme '{gtk}' (system — no download URL)")
 
             # 4. Install cursor theme
             cursor = preset.themes.get("cursor")
             cursor_url = resources.get("cursor-url", "")
             if cursor and cursor_url:
-                self._install_cursor_theme(cursor, cursor_url)
+                installed = self._install_cursor_theme(cursor, cursor_url)
+                if installed:
+                    print(f"  -> Cursor theme installed: {cursor}")
+                else:
+                    print(f"  -> [WARN] Failed to install cursor theme '{cursor}'")
+            elif cursor:
+                print(f"  -> Cursor theme '{cursor}' (system — no download URL)")
 
             # 5. Apply Hyprland theme (borders, gaps, rounding, etc.)
             if hyprland_theme:

@@ -49,10 +49,7 @@
       "rofi-theme": "nordic",
       "resources": {
         "theme-url": "https://github.com/EliverLara/Nordic/releases/download/v2.2.0/Nordic.tar.xz",
-        "icon-url": "",
         "cursor-url": "https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.7/Bibata-Modern-Classic.tar.xz",
-        "waybar-style-url": "",
-        "rofi-theme-url": "",
         "fonts": [
           "https://github.com/tonsky/FiraCode/releases/download/6.2/Fira_Code_v6.2.zip"
         ]
