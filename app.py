@@ -15,6 +15,9 @@ sys.path.insert(0, str(project_root))
 from src.system_checker import SystemChecker, WindowManager
 from src.file_manager import FileManager
 from src.ui_builder import UIBuilder, Menu, MenuItem, MenuAction
+from src.package_manager import PackageManager
+from src.config_manager import ConfigManager
+from src.preset_application_manager import PresetApplicationManager, PresetType
 
 
 class LinuxTweakerApp:
@@ -30,6 +33,9 @@ class LinuxTweakerApp:
         self.system_checker = SystemChecker()
         self.file_manager = FileManager()
         self.ui = UIBuilder()
+        self.package_manager = PackageManager()
+        self.config_manager = ConfigManager(self.file_manager)
+        self.preset_manager = PresetApplicationManager(self.package_manager, self.config_manager)
         self._initialized = False
     
     def initialize(self) -> bool:
@@ -157,11 +163,78 @@ class LinuxTweakerApp:
         return Menu("Linux Tweaker v2.0.0 - Main Menu", items)
     
     def apply_preset_menu(self):
-        """Show preset application menu (placeholder)."""
-        self.ui.print_header("Apply Preset")
-        self.ui.print_info("Preset application coming soon...")
-        self.ui.print_info("This feature will be implemented in the next phase.")
-        return True
+        """Show preset application menu."""
+        try:
+            self.ui.print_header("Apply Preset")
+            
+            # Get available presets
+            presets = self.preset_manager.get_available_presets()
+            
+            # Display presets
+            self.ui.print_info("Available Presets:")
+            for i, preset in enumerate(presets, 1):
+                self.ui.print_info(f"\n[{i}] {preset.value.replace('_', ' ').title()}")
+                self.ui.print_info(f"    {self.preset_manager.get_preset_description(preset)}")
+            
+            # Get user choice
+            choice = self.ui.get_input(f"\nSelect preset [1-{len(presets)}]", "1")
+            
+            try:
+                choice_num = int(choice)
+                if 1 <= choice_num <= len(presets):
+                    selected_preset = presets[choice_num - 1]
+                    
+                    # Confirm
+                    if not self.ui.confirm(f"Apply '{selected_preset.value.replace('_', ' ').title()}' preset?"):
+                        self.ui.print_info("Preset application cancelled.")
+                        return True
+                    
+                    # Apply preset with progress callback
+                    def progress_callback(message):
+                        self.ui.print_info(f"  {message}")
+                    
+                    self.ui.print_info("\nApplying preset...")
+                    status = self.preset_manager.apply_preset(
+                        selected_preset,
+                        install_apps=True,
+                        apply_configs=True,
+                        progress_callback=progress_callback
+                    )
+                    
+                    # Show results
+                    if status.value == "success":
+                        self.ui.print_success("Preset applied successfully!")
+                        
+                        # Show progress
+                        for msg in self.preset_manager.get_progress():
+                            self.ui.print_info(f"  {msg}")
+                        
+                        # Show restart message
+                        self.ui.print_warning("\nPlease restart your window manager to apply changes.")
+                        
+                    elif status.value == "partial":
+                        self.ui.print_warning("Preset partially applied.")
+                        
+                        # Show errors
+                        for error in self.preset_manager.get_errors():
+                            self.ui.print_error(f"  {error}")
+                        
+                    else:
+                        self.ui.print_error("Preset application failed.")
+                        
+                        # Show errors
+                        for error in self.preset_manager.get_errors():
+                            self.ui.print_error(f"  {error}")
+                else:
+                    self.ui.print_error("Invalid choice.")
+            except ValueError:
+                self.ui.print_error("Invalid input.")
+            
+            return True
+            
+        except Exception as e:
+            self.ui.add_error(f"Error in preset menu: {e}")
+            return True
     
     def reset_configs(self):
         """Reset configurations (placeholder)."""
