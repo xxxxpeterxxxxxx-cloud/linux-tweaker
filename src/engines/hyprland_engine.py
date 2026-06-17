@@ -668,6 +668,11 @@ element selected {{
     icon-theme: "Papirus";
 }}
 @theme "{theme_file}"
+
+// Default mode when launched without arguments
+configuration {{
+    modi: "drun";
+}}
 """
         rofi_cfg.write_text(config_content)
         print(f"  -> Rofi glassmorphism theme applied: {theme}")
