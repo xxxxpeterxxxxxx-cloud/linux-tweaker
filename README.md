@@ -17,7 +17,10 @@ pip install --user -r requirements.txt
 ## Use
 
 ```bash
-# See all themes
+# Interactive mode (recommended for first-time users)
+python3 main.py
+
+# Or use CLI commands
 linux-tweaker --list
 
 # Apply a theme
@@ -28,6 +31,12 @@ tweak --apply "Cyberpunk" --force-de hyprland
 
 # Restore backup if something breaks
 tweak --restore 20260617_123456
+
+# Check system health
+linux-tweaker --doctor
+
+# List all backups
+linux-tweaker --list-backups
 ```
 
 ## Themes
