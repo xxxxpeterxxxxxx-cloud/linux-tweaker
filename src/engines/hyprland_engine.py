@@ -112,73 +112,25 @@ class HyprlandThemeEngine(ThemeEngine):
             return False
 
     def _replace_line(self, path: Path, key: str, new_value: str):
-        """Replace a key=value line in Hyprland config. Handles block syntax like general:border_size."""
+        """Replace a key=value line in Hyprland config. Handles block syntax like general:border_size and nested like decoration:blur:enabled."""
         if not path.exists():
             path.parent.mkdir(parents=True, exist_ok=True)
-            # For block syntax, create the block structure
-            if ":" in key:
-                section, setting = key.split(":", 1)
-                path.write_text(f"{section} {{\n    {setting} = {new_value}\n}}\n")
-            else:
-                path.write_text(f"{key} = {new_value}\n")
+            path.write_text(self._generate_config_block(key, new_value))
             return True
         
         lines = path.read_text().splitlines()
-        replaced = False
+        parts = key.split(":")
         
-        # Handle block syntax (e.g., "general:border_size")
-        if ":" in key:
-            section, setting = key.split(":", 1)
-            in_section = False
-            section_indent = 0
-            
-            for i, line in enumerate(lines):
-                stripped = line.strip()
-                # Detect section start
-                if stripped.startswith(section + " {"):
-                    in_section = True
-                    section_indent = len(line) - len(line.lstrip())
-                    continue
-                # Detect section end
-                if in_section and stripped == "}":
-                    in_section = False
-                    continue
-                # If we're in the right section, look for the setting
-                if in_section:
-                    if stripped.startswith(setting + "=") or stripped.startswith(setting + " ="):
-                        # Preserve indentation
-                        indent = len(line) - len(line.lstrip())
-                        lines[i] = " " * indent + f"{setting} = {new_value}"
-                        replaced = True
-                        break
-            
-            # If not found, add it to the section (create section if needed)
-            if not replaced:
-                # Find if section exists
-                section_found = False
-                section_line_idx = -1
-                for i, line in enumerate(lines):
-                    if line.strip().startswith(section + " {"):
-                        section_found = True
-                        section_line_idx = i
-                        break
-                
-                if section_found:
-                    # Find the closing brace and insert before it
-                    for i in range(section_line_idx + 1, len(lines)):
-                        if lines[i].strip() == "}":
-                            indent = len(lines[section_line_idx]) - len(lines[section_line_idx].lstrip())
-                            lines.insert(i, " " * (indent + 4) + f"{setting} = {new_value}")
-                            replaced = True
-                            break
-                else:
-                    # Create new section at end
-                    lines.append(f"{section} {{")
-                    lines.append(f"    {setting} = {new_value}")
-                    lines.append(f"}}")
-                    replaced = True
+        # Handle nested blocks (e.g., decoration:blur:enabled)
+        if len(parts) == 3:
+            section, subsec, setting = parts
+            self._replace_in_nested_block(lines, section, subsec, setting, new_value)
+        elif len(parts) == 2:
+            section, setting = parts
+            self._replace_in_block(lines, section, setting, new_value)
         else:
-            # Handle flat key syntax (fallback)
+            # Flat key
+            replaced = False
             for i, line in enumerate(lines):
                 stripped = line.strip()
                 if not stripped or stripped.startswith("#"):
@@ -191,6 +143,126 @@ class HyprlandThemeEngine(ThemeEngine):
         
         path.write_text("\n".join(lines) + "\n")
         return True
+
+    def _generate_config_block(self, key: str, value: str) -> str:
+        """Generate a minimal config block for a key."""
+        parts = key.split(":")
+        if len(parts) == 3:
+            return f"{parts[0]} {{\n    {parts[1]} {{\n        {parts[2]} = {value}\n    }}\n}}\n"
+        elif len(parts) == 2:
+            return f"{parts[0]} {{\n    {parts[1]} = {value}\n}}\n"
+        return f"{key} = {value}\n"
+
+    def _replace_in_block(self, lines: list, section: str, setting: str, new_value: str):
+        """Replace or add a setting inside a top-level block."""
+        in_section = False
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith(section + " {"):
+                in_section = True
+                continue
+            if in_section and stripped == "}":
+                in_section = False
+                continue
+            if in_section:
+                if stripped.startswith(setting + "=") or stripped.startswith(setting + " ="):
+                    indent = len(line) - len(line.lstrip())
+                    lines[i] = " " * indent + f"{setting} = {new_value}"
+                    return
+        # Not found, add to section or create section
+        for i, line in enumerate(lines):
+            if line.strip().startswith(section + " {"):
+                # Find closing brace
+                for j in range(i + 1, len(lines)):
+                    if lines[j].strip() == "}":
+                        indent = len(lines[i]) - len(lines[i].lstrip())
+                        lines.insert(j, " " * (indent + 4) + f"{setting} = {new_value}")
+                        return
+        # Section not found, append
+        lines.append(f"{section} {{")
+        lines.append(f"    {setting} = {new_value}")
+        lines.append("}")
+
+    def _replace_in_nested_block(self, lines: list, section: str, subsec: str, setting: str, new_value: str):
+        """Replace or add a setting inside a nested block (e.g., decoration -> blur -> enabled)."""
+        in_section = False
+        in_subsec = False
+        sec_indent = 0
+        
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            # Detect top-level section
+            if stripped.startswith(section + " {"):
+                in_section = True
+                sec_indent = len(line) - len(line.lstrip())
+                continue
+            if in_section and stripped == "}":
+                in_section = False
+                continue
+            if in_section:
+                # Detect nested subsection
+                if stripped.startswith(subsec + " {"):
+                    in_subsec = True
+                    continue
+                if in_subsec and stripped == "}":
+                    in_subsec = False
+                    continue
+                if in_subsec:
+                    if stripped.startswith(setting + "=") or stripped.startswith(setting + " ="):
+                        indent = len(line) - len(line.lstrip())
+                        lines[i] = " " * indent + f"{setting} = {new_value}"
+                        return
+        # Not found, need to create nested structure
+        self._ensure_nested_block(lines, section, subsec, setting, new_value)
+
+    def _ensure_nested_block(self, lines: list, section: str, subsec: str, setting: str, new_value: str):
+        """Ensure section and subsection exist, then add setting."""
+        sec_idx = -1
+        subsec_idx = -1
+        sec_indent = 0
+        
+        for i, line in enumerate(lines):
+            if line.strip().startswith(section + " {"):
+                sec_idx = i
+                sec_indent = len(line) - len(line.lstrip())
+                # Look for subsection within this section
+                for j in range(i + 1, len(lines)):
+                    if lines[j].strip() == "}":
+                        break
+                    if lines[j].strip().startswith(subsec + " {"):
+                        subsec_idx = j
+                        # Find setting within subsection
+                        for k in range(j + 1, len(lines)):
+                            if lines[k].strip() == "}":
+                                break
+                            if lines[k].strip().startswith(setting + "=") or lines[k].strip().startswith(setting + " ="):
+                                indent = len(lines[k]) - len(lines[k].lstrip())
+                                lines[k] = " " * indent + f"{setting} = {new_value}"
+                                return
+                        # Subsection exists but setting not found, add it
+                        for k in range(j + 1, len(lines)):
+                            if lines[k].strip() == "}":
+                                sub_indent = len(lines[j]) - len(lines[j].lstrip())
+                                lines.insert(k, " " * (sub_indent + 4) + f"{setting} = {new_value}")
+                                return
+                        break
+                break
+        
+        if sec_idx == -1:
+            # Create section + subsection + setting
+            lines.append(f"{section} {{")
+            lines.append(f"    {subsec} {{")
+            lines.append(f"        {setting} = {new_value}")
+            lines.append("    }")
+            lines.append("}")
+        elif subsec_idx == -1:
+            # Section exists but subsection doesn't, insert before section close
+            for j in range(sec_idx + 1, len(lines)):
+                if lines[j].strip() == "}":
+                    lines.insert(j, " " * (sec_indent + 4) + f"{subsec} {{")
+                    lines.insert(j + 1, " " * (sec_indent + 8) + f"{setting} = {new_value}")
+                    lines.insert(j + 2, " " * (sec_indent + 4) + "}")
+                    return
 
     def _read_config_value(self, path: Path, key: str) -> str:
         """Read a value from Hyprland config. Handles flat keys and block syntax (section:key)."""
@@ -508,9 +580,6 @@ configuration {{
     modi: "drun,run,window";
     show-icons: true;
     icon-theme: "Papirus";
-    location: 0;
-    fixed-num-lines: true;
-    hover-select: true;
 }}
 * {{
     background: {rgba_bg};
