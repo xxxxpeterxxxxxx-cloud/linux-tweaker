@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-06-17
+
+### Added
+- `--doctor` CLI flag and interactive health check menu option — checks all dependencies for your DE
+- `--version`, `-v` (verbose), `-q` (quiet) CLI flags for better control
+- `--restore latest` shorthand for restoring the most recent backup
+- `version.py` single source of truth for version number
+- GitHub Actions CI workflow for automated testing across Python 3.8-3.12
+- Exponential backoff retry logic for downloads (handles GitHub rate limiting)
+- Connection timeouts (15s) and max download time (60s) for curl/wget
+- Install script timeout (120s) to prevent hanging on interactive prompts
+- Waybar CSS animations: charge-glow, urgent-pulse, attention-blink, temp-pulse
+- Health check in TUI menu (option 8) with colored dependency status table
+
+### Fixed
+- Rofi "unsure what to do" error — shell function auto-adds `-show drun`
+- Rofi config.rasi duplicate configuration blocks removed
+- Hyprland nested block generation (decoration:blur:enabled works correctly)
+- No more gsettings pollution from Hyprland theming
+- Theme tarball URL derivation (removed duplicate https://github.com/)
+- Install script `set -euo pipefail` for better error handling
+- Main menu version display now uses actual version from version.py
+- `--restore` CLI argument now works from command line
+- DE detection wrapped in try/except to prevent crashes
+
+### Changed
+- README shortened from 207 lines to 64 lines for clarity
+- install.sh now shows colored checkmarks and better error messages
+- Waybar CSS improved with better spacing, shadows, and transitions
+- _check_dependencies in Hyprland engine no longer requires gsettings
+- Requirements: removed gsettings from Hyprland dependency checks
+
+## [1.3.0] - 2026-06-17
+
+### Added
+- setup.py for pip install from source
+- install.sh one-liner curl installer
+- Makefile with install/uninstall/update/test targets
+- PKGBUILD for Arch Linux AUR
+- Desktop entry file for app launchers
+- 5 installation methods documented in README
+
+## [1.2.0] - 2026-06-17
+
+### Fixed
+- Rofi theme parsing errors
+- Hyprland config empty after applying preset
+- Install scripts hanging in non-TTY environments
+
 ## [1.0.0] - 2026-06-14
 
 ### Added
