@@ -158,6 +158,7 @@ Examples:
   %(prog)s --monitor                Show hardware stats
   %(prog)s --tune                   Auto-tune power profile
   %(prog)s --doctor                 Check system health
+  %(prog)s --list-backups            Show all backups
         """,
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -168,6 +169,7 @@ Examples:
     parser.add_argument("--monitor", action="store_true", help="Show hardware monitoring")
     parser.add_argument("--tune", action="store_true", help="Auto-tune power profile")
     parser.add_argument("--force-de", metavar="DE", help="Force DE engine (gnome, plasma, xfce, hyprland, sway, i3, bspwm, lxqt, mate)")
+    parser.add_argument("--list-backups", action="store_true", help="List all available backups")
     parser.add_argument("--doctor", action="store_true", help="Check system health and dependencies")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
     parser.add_argument("-q", "--quiet", action="store_true", help="Suppress non-error output")
@@ -247,6 +249,8 @@ Examples:
         return do_power_tune()
     elif args.doctor:
         return do_health_check(de_info)
+    elif args.list_backups:
+        return list_backups()
 
     # Interactive mode
     print(f"Linux Tweaker v{__version__}")
@@ -255,6 +259,30 @@ Examples:
     print(f"Engine: {de_info.engine}\n")
     menu = MainMenu(de_info)
     menu.run()
+    return 0
+
+
+def list_backups():
+    """List all available backups."""
+    from pathlib import Path
+    backup_dir = Path.home() / ".config" / "linux-tweaker" / "backups"
+    if not backup_dir.exists():
+        print("No backups found.")
+        return 0
+    backups = sorted(backup_dir.glob("*"))
+    if not backups:
+        print("No backups found.")
+        return 0
+    print(f"\n{'BACKUP ID':<30} {'SIZE':>10} {'DATE':<20}")
+    print("-" * 60)
+    for b in backups:
+        size = sum(f.stat().st_size for f in b.rglob("*") if f.is_file()) if b.is_dir() else b.stat().st_size
+        size_str = f"{size / 1024:.1f}K" if size < 1024 * 1024 else f"{size / (1024 * 1024):.1f}M"
+        date = b.name.split("_")[-2:] if "_" in b.name else ["", ""]
+        date_str = "_".join(date) if len(date) == 2 else b.name
+        print(f"{b.name:<30} {size_str:>10} {date_str:<20}")
+    print(f"\n{len(backups)} backup(s) found.")
+    print("Restore with: linux-tweaker --restore <backup-id>")
     return 0
 
 
