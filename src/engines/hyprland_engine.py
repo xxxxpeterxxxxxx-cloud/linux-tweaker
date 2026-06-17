@@ -903,43 +903,49 @@ exec-once = swww init || true
             if rofi:
                 self._apply_rofi_theme(rofi, rofi_url, hyprland_theme)
 
-            # 9. GTK theme (via gsettings if available, or write to ~/.config/gtk-3.0/settings.ini)
+            # 9. GTK theme (write to ~/.config/gtk-3.0/settings.ini, NOT gsettings)
             if gtk:
-                try:
-                    self._run(["gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", gtk], check=False)
-                except FileNotFoundError:
-                    pass
-                gtk_ini = self.config_dir / "gtk-3.0" / "settings.ini"
-                gtk_ini.parent.mkdir(parents=True, exist_ok=True)
-                if gtk_ini.exists():
-                    self._replace_line(gtk_ini, "gtk-theme-name", gtk)
-                else:
-                    gtk_ini.write_text(f"[Settings]\ngtk-theme-name={gtk}\n")
+                for gtk_ver in ("gtk-3.0", "gtk-4.0"):
+                    gtk_ini = self.config_dir / gtk_ver / "settings.ini"
+                    gtk_ini.parent.mkdir(parents=True, exist_ok=True)
+                    if gtk_ini.exists():
+                        self._replace_line(gtk_ini, "gtk-theme-name", gtk)
+                    else:
+                        gtk_ini.write_text(f"[Settings]\ngtk-theme-name={gtk}\n")
                 print(f"  -> GTK Theme: {gtk}")
 
-            # 10. Icon theme
+            # 10. Icon theme (write to GTK settings.ini, NOT gsettings)
             if icon:
-                try:
-                    self._run(["gsettings", "set", "org.gnome.desktop.interface", "icon-theme", icon], check=False)
-                except FileNotFoundError:
-                    pass
+                for gtk_ver in ("gtk-3.0", "gtk-4.0"):
+                    gtk_ini = self.config_dir / gtk_ver / "settings.ini"
+                    gtk_ini.parent.mkdir(parents=True, exist_ok=True)
+                    if gtk_ini.exists():
+                        self._replace_line(gtk_ini, "gtk-icon-theme-name", icon)
+                    else:
+                        gtk_ini.write_text(f"[Settings]\ngtk-icon-theme-name={icon}\n")
                 print(f"  -> Icon Theme: {icon}")
 
-            # 11. Cursor theme (via gsettings)
+            # 11. Cursor theme (write to GTK settings.ini, NOT gsettings)
             if cursor:
-                try:
-                    self._run(["gsettings", "set", "org.gnome.desktop.interface", "cursor-theme", cursor], check=False)
-                except FileNotFoundError:
-                    pass
+                for gtk_ver in ("gtk-3.0", "gtk-4.0"):
+                    gtk_ini = self.config_dir / gtk_ver / "settings.ini"
+                    gtk_ini.parent.mkdir(parents=True, exist_ok=True)
+                    if gtk_ini.exists():
+                        self._replace_line(gtk_ini, "gtk-cursor-theme-name", cursor)
+                    else:
+                        gtk_ini.write_text(f"[Settings]\ngtk-cursor-theme-name={cursor}\n")
                 print(f"  -> Cursor Theme: {cursor}")
 
-            # 12. Font
+            # 12. Font (write to GTK settings.ini, NOT gsettings)
             font = preset.themes.get("font")
             if font:
-                try:
-                    self._run(["gsettings", "set", "org.gnome.desktop.interface", "font-name", font], check=False)
-                except FileNotFoundError:
-                    pass
+                for gtk_ver in ("gtk-3.0", "gtk-4.0"):
+                    gtk_ini = self.config_dir / gtk_ver / "settings.ini"
+                    gtk_ini.parent.mkdir(parents=True, exist_ok=True)
+                    if gtk_ini.exists():
+                        self._replace_line(gtk_ini, "gtk-font-name", font)
+                    else:
+                        gtk_ini.write_text(f"[Settings]\ngtk-font-name={font}\n")
                 print(f"  -> Font: {font}")
 
             print(f"\n[{self.wm.title()}] Done. Backup ID: {backup_id}", flush=True)
