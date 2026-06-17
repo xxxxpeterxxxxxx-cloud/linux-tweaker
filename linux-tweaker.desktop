@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Linux Tweaker
+Comment=Rice & Optimize Tool for Linux
+Exec=linux-tweaker
+Icon=preferences-desktop-theme
+Terminal=true
+Type=Application
+Categories=System;Settings;
+Keywords=ricing;theme;hyprland;gnome;kde;xfce;

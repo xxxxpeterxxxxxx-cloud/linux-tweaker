@@ -27,18 +27,61 @@ Ensure you have the following installed on your system:
 - `curl` or `wget`
 
 ### 2. Installation
+
+Choose one of these methods:
+
+#### Method A: One-liner curl install (easiest)
+```bash
+curl -fsSL https://raw.githubusercontent.com/xxxxpeterxxxxxx-cloud/linux-tweaker/main/install.sh | bash
+# Then run: linux-tweaker --list
+```
+
+#### Method B: Git clone + pip
 ```bash
 git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
 cd linux-tweaker
-
-# Install requirements
 pip install --user -r requirements.txt
+python3 main.py --list
+```
+
+#### Method C: Makefile install
+```bash
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
+cd linux-tweaker
+make install
+# Adds `linux-tweaker` and `tweak` to ~/.local/bin
+```
+
+#### Method D: pip install from repo
+```bash
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
+cd linux-tweaker
+pip install --user .
+# Adds `linux-tweaker` and `tweak` commands
+```
+
+#### Method E: AUR (Arch Linux)
+```bash
+# Using yay
+yay -S linux-tweaker
+
+# Or manually
+
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
+cd linux-tweaker
+makepkg -si
 ```
 
 ### 3. Usage
 ```bash
 # Start the interactive TUI menu
-python src/main.py
+linux-tweaker
+# or
+python3 main.py
+
+# Using the short alias
+tweak --list
+tweak --apply "Blue Dream"
 ```
 
 ---
@@ -49,19 +92,22 @@ Instead of the TUI, you can use the command-line interface directly:
 
 ```bash
 # List all available presets
-python src/main.py list
+linux-tweaker --list
 
 # Preview changes of a preset before applying
-python src/main.py preview lime-glass
+linux-tweaker --preview "Blue Dream"
 
 # Apply a preset
-python src/main.py apply lime-glass
+linux-tweaker --apply "Blue Dream"
 
 # Restore a previous backup
-python src/main.py restore <backup-id>
+linux-tweaker --restore <backup-id>
 
 # Run hardware monitor
-python src/main.py monitor
+linux-tweaker --monitor
+
+# Force a specific desktop environment
+linux-tweaker --apply "Blue Dream" --force-de hyprland
 ```
 
 ---
