@@ -575,13 +575,18 @@ tooltip label {{ color: {fg}; }}
         rgba_bg = f"rgba({int(bg[1:3],16)},{int(bg[3:5],16)},{int(bg[5:7],16)},0.92)"
         rgba_entry = f"rgba({int(bg[1:3],16)},{int(bg[3:5],16)},{int(bg[5:7],16)},0.6)"
         
-        rasi = f"""@import "default"
-
-* {{
-    background: {rgba_bg};
+        # Create separate theme file
+        theme_file = rofi_dir / "themes" / f"linux-tweaker-{theme}.rasi"
+        theme_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        theme_content = f"""* {{
+    background-color: {rgba_bg};
     foreground: {fg};
     accent: {accent};
     bg-alt: {rgba_entry};
+    border-color: {accent};
+    text-color: {fg};
+    font: "Inter 13";
 }}
 
 window {{
@@ -590,13 +595,13 @@ window {{
     border: 2px solid;
     border-color: @accent;
     border-radius: 16px;
-    background-color: @background;
+    background-color: @background-color;
     padding: 20px;
 }}
 
 mainbox {{
     background-color: transparent;
-    children: [inputbar, listview];
+    children: [ inputbar, listview ];
     spacing: 12px;
 }}
 
@@ -604,7 +609,7 @@ inputbar {{
     background-color: @bg-alt;
     border-radius: 12px;
     padding: 10px 16px;
-    children: [prompt, entry];
+    children: [ prompt, entry ];
     spacing: 10px;
 }}
 
@@ -653,12 +658,18 @@ element selected {{
     background-color: @accent;
     text-color: {bg};
 }}
-
-element selected element-text {{
-    text-color: {bg};
-}}
 """
-        rofi_cfg.write_text(rasi)
+        theme_file.write_text(theme_content)
+        
+        # Create config.rasi that references the theme
+        config_content = f"""configuration {{
+    modi: "drun,run,window";
+    show-icons: true;
+    icon-theme: "Papirus";
+}}
+@theme "{theme_file}"
+"""
+        rofi_cfg.write_text(config_content)
         print(f"  -> Rofi glassmorphism theme applied: {theme}")
 
     def _apply_hyprland_theme(self, theme_config: dict):
