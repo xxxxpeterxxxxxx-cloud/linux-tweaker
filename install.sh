@@ -16,9 +16,11 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}==>${NC} Linux Tweaker Installer"
 echo ""
 
-# Check Python version
+# Check Python version (proper numeric comparison)
 python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))' 2>/dev/null || echo "0")
-if [[ "$python_version" < "3.8" ]]; then
+python_major=$(python3 -c 'import sys; print(sys.version_info[0])' 2>/dev/null || echo "0")
+python_minor=$(python3 -c 'import sys; print(sys.version_info[1])' 2>/dev/null || echo "0")
+if [[ "$python_major" -lt 3 ]] || [[ "$python_major" -eq 3 && "$python_minor" -lt 8 ]]; then
     echo -e "${RED}ERROR:${NC} Python 3.8+ required. Found: $python_version"
     echo "Install Python 3.8+ and try again."
     exit 1
