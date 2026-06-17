@@ -11,14 +11,28 @@ Complete installation and setup instructions for linux-tweaker.
 
 ## Quick Install (5 minutes)
 
-### 1. Clone the Repository
+### One-Command Install (Recommended)
 
 ```bash
-git clone https://github.com/yourusername/linux-tweaker.git
+curl -fsSL https://raw.githubusercontent.com/xxxxpeterxxxxxx-cloud/linux-tweaker/main/install.sh | bash
+```
+
+This will:
+- Clone the repository to `~/.local/share/linux-tweaker`
+- Install Python dependencies
+- Create `linux-tweaker` and `tweak` commands
+- Add to PATH automatically
+
+### Manual Install
+
+#### 1. Clone the Repository
+
+```bash
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
 cd linux-tweaker
 ```
 
-### 2. Install Python Dependencies
+#### 2. Install Python Dependencies
 
 ```bash
 # User-space installation (recommended)
@@ -28,15 +42,21 @@ pip install --user -r requirements.txt
 pip install -r requirements.txt
 ```
 
-### 3. Run the Application
+#### 3. Run the Application
 
 ```bash
 # Interactive menu
-python src/main.py
+python3 main.py
 
-# Or make it executable
-chmod +x src/main.py
-./src/main.py
+# Or create wrapper commands
+echo '#!/usr/bin/env bash' > ~/.local/bin/linux-tweaker
+echo "exec python3 $(pwd)/main.py \"\$@\"" >> ~/.local/bin/linux-tweaker
+chmod +x ~/.local/bin/linux-tweaker
+ln -sf ~/.local/bin/linux-tweaker ~/.local/bin/tweak
+
+# Add to PATH
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ## Advanced Installation
@@ -50,7 +70,7 @@ If you want to distribute linux-tweaker as a single executable:
 pip install --user pyinstaller
 
 # Build single-file binary
-pyinstaller --onefile src/main.py -n linux-tweaker
+pyinstaller --onefile main.py -n linux-tweaker
 
 # Binary will be in dist/linux-tweaker
 ./dist/linux-tweaker
@@ -77,7 +97,7 @@ If you want to contribute:
 
 ```bash
 # Clone your fork
-git clone https://github.com/yourusername/linux-tweaker.git
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
 cd linux-tweaker
 
 # Create virtual environment
@@ -111,8 +131,8 @@ python3 -c "import rich; import yaml; import psutil; print('✓ All dependencies
 ### Test the Application
 
 ```bash
-python src/main.py --version
-python src/main.py list  # List all presets
+python3 main.py --version
+python3 main.py --list  # List all presets
 ```
 
 ## Troubleshooting
@@ -128,14 +148,14 @@ pip install --user -r requirements.txt
 
 **Solution**: Use `python3` instead
 ```bash
-python3 src/main.py
+python3 main.py
 ```
 
 ### "Permission denied" when running
 
 **Solution**: Make the file executable
 ```bash
-chmod +x src/main.py
+chmod +x main.py
 ```
 
 ### "git: command not found"
@@ -175,12 +195,12 @@ sudo dnf install curl
 sudo pacman -S python python-pip git curl
 
 # Clone and install
-git clone https://github.com/yourusername/linux-tweaker.git
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
 cd linux-tweaker
 pip install --user -r requirements.txt
 
 # Run
-python src/main.py
+python3 main.py
 ```
 
 ### Ubuntu / Debian
@@ -191,12 +211,12 @@ sudo apt update
 sudo apt install python3 python3-pip git curl
 
 # Clone and install
-git clone https://github.com/yourusername/linux-tweaker.git
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
 cd linux-tweaker
 pip install --user -r requirements.txt
 
 # Run
-python3 src/main.py
+python3 main.py
 ```
 
 ### Fedora / RHEL
@@ -206,12 +226,12 @@ python3 src/main.py
 sudo dnf install python3 python3-pip git curl
 
 # Clone and install
-git clone https://github.com/yourusername/linux-tweaker.git
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
 cd linux-tweaker
 pip install --user -r requirements.txt
 
 # Run
-python3 src/main.py
+python3 main.py
 ```
 
 ### macOS
@@ -224,12 +244,12 @@ python3 src/main.py
 brew install python git curl
 
 # Clone and install
-git clone https://github.com/yourusername/linux-tweaker.git
+git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
 cd linux-tweaker
 pip install --user -r requirements.txt
 
 # Run
-python src/main.py
+python3 main.py
 ```
 
 ## Immutable Systems (Bluefin, Aurora, Silverblue)
@@ -241,7 +261,7 @@ linux-tweaker is designed to work on immutable systems without requiring root:
 pip install --user -r requirements.txt
 
 # Run normally (no sudo needed)
-python src/main.py
+python3 main.py
 ```
 
 All configurations are stored in `~/.config/linux-tweaker/` and `~/.local/share/linux-tweaker/`.
@@ -271,7 +291,7 @@ rm -rf ~/.local/share/linux-tweaker/
 
 ## Next Steps
 
-1. **Run the application**: `python src/main.py`
+1. **Run the application**: `python3 main.py`
 2. **Browse presets**: Select "View Presets" from the menu
 3. **Apply a theme**: Select "Apply Preset" and choose your favorite
 4. **Enjoy your new rice!** 🎨
