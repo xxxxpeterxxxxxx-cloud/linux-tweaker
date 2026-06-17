@@ -413,42 +413,193 @@ class HyprlandThemeEngine(ThemeEngine):
         
         rgba_bg = f"rgba({int(bg[1:3],16)},{int(bg[3:5],16)},{int(bg[5:7],16)},0.75)"
         
-        css = f"""/* linux-tweaker glassmorphism waybar theme */
-* {{ font-family: "Inter", "JetBrains Mono Nerd Font", "Font Awesome 6 Free", sans-serif; font-size: 14px; font-weight: 500; min-height: 0; }}
-window#waybar {{ background-color: {rgba_bg}; border-bottom: 2px solid {accent}; color: {fg}; transition-property: background-color; transition-duration: 0.5s; }}
-window#waybar.hidden {{ opacity: 0.2; }}
-.modules-left, .modules-center, .modules-right {{ padding: 0 8px; }}
+        css = f"""/* linux-tweaker glassmorphism waybar theme - v{__version__} */
+* {{
+    font-family: "Inter", "JetBrains Mono Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: none;
+    padding: 0;
+    margin: 0;
+}}
+
+window#waybar {{
+    background-color: {rgba_bg};
+    border-bottom: 2px solid {accent};
+    color: {fg};
+    transition-property: background-color;
+    transition-duration: 0.5s;
+}}
+
+window#waybar.hidden {{
+    opacity: 0.2;
+}}
+
+.modules-left, .modules-center, .modules-right {{
+    padding: 0 8px;
+}}
+
 #workspaces, #window, #cpu, #memory, #temperature, #network, #pulseaudio, #battery, #clock, #tray, #custom-media {{
-    background-color: rgba(255,255,255,0.05); border-radius: 12px; padding: 4px 12px; margin: 4px 2px; color: {fg}; transition: all 0.3s ease;
+    background-color: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 4px 12px;
+    margin: 4px 2px;
+    color: {fg};
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }}
+
 #workspaces:hover, #cpu:hover, #memory:hover, #temperature:hover, #network:hover, #pulseaudio:hover, #battery:hover, #clock:hover {{
-    background-color: rgba(255,255,255,0.12);
+    background-color: rgba(255,255,255,0.14);
+    transform: translateY(-1px);
 }}
-#workspaces {{ padding: 4px 6px; }}
-#workspaces button {{ padding: 0 10px; margin: 0 2px; color: rgba({int(fg[1:3],16)},{int(fg[3:5],16)},{int(fg[5:7],16)},0.4); background-color: transparent; border-radius: 8px; transition: all 0.3s ease; min-width: 24px; }}
-#workspaces button:hover {{ background-color: rgba(255,255,255,0.1); color: {fg}; }}
-#workspaces button.focused {{ background-color: {accent}; color: {bg}; font-weight: bold; }}
-#workspaces button.urgent {{ background-color: #f38ba8; color: {bg}; }}
-#window {{ font-weight: 500; }}
-window#waybar.empty #window {{ background-color: transparent; }}
-#clock {{ font-weight: bold; font-size: 15px; }}
-#battery {{ color: {fg}; }}
-#battery.charging {{ color: #a6e3a1; }}
-#battery.warning:not(.charging) {{ color: #f9e2af; }}
-#battery.critical:not(.charging) {{ color: #f38ba8; animation: blink 1s linear infinite; }}
-@keyframes blink {{ 50% {{ opacity: 0.5; }} }}
-#network {{ color: {fg}; }}
-#network.disconnected {{ color: #f38ba8; }}
-#pulseaudio {{ color: {fg}; }}
-#pulseaudio.muted {{ color: rgba({int(fg[1:3],16)},{int(fg[3:5],16)},{int(fg[5:7],16)},0.3); }}
-#tray {{ padding: 4px 8px; }}
-#tray > .passive {{ -gtk-icon-effect: dim; }}
-#tray > .needs-attention {{ -gtk-icon-effect: highlight; background-color: #f38ba8; }}
-#temperature {{ color: {fg}; }}
-#temperature.critical {{ color: #f38ba8; }}
-#cpu, #memory {{ color: {fg}; }}
-tooltip {{ background-color: {bg}; border: 1px solid {accent}; border-radius: 8px; padding: 8px; }}
-tooltip label {{ color: {fg}; }}
+
+#workspaces {{
+    padding: 4px 6px;
+}}
+
+#workspaces button {{
+    padding: 0 10px;
+    margin: 0 2px;
+    color: rgba({int(fg[1:3],16)},{int(fg[3:5],16)},{int(fg[5:7],16)},0.5);
+    background-color: transparent;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 24px;
+}}
+
+#workspaces button:hover {{
+    background-color: rgba(255,255,255,0.12);
+    color: {fg};
+}}
+
+#workspaces button.focused {{
+    background-color: {accent};
+    color: {bg};
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}}
+
+#workspaces button.urgent {{
+    background-color: #f38ba8;
+    color: {bg};
+    animation: urgent-pulse 1.5s ease-in-out infinite;
+}}
+
+@keyframes urgent-pulse {{
+    0%, 100% {{ opacity: 1; }}
+    50% {{ opacity: 0.6; }}
+}}
+
+#window {{
+    font-weight: 500;
+}}
+
+window#waybar.empty #window {{
+    background-color: transparent;
+}}
+
+#clock {{
+    font-weight: bold;
+    font-size: 15px;
+}}
+
+#battery {{
+    color: {fg};
+}}
+
+#battery.charging {{
+    color: #a6e3a1;
+    animation: charge-glow 2s ease-in-out infinite;
+}}
+
+@keyframes charge-glow {{
+    0%, 100% {{ text-shadow: 0 0 0 transparent; }}
+    50% {{ text-shadow: 0 0 8px rgba(166,227,161,0.4); }}
+}}
+
+#battery.warning:not(.charging) {{
+    color: #f9e2af;
+}}
+
+#battery.critical:not(.charging) {{
+    color: #f38ba8;
+    animation: blink 1s linear infinite;
+}}
+
+@keyframes blink {{
+    50% {{ opacity: 0.5; }}
+}}
+
+#network {{
+    color: {fg};
+}}
+
+#network.disconnected {{
+    color: #f38ba8;
+}}
+
+#pulseaudio {{
+    color: {fg};
+}}
+
+#pulseaudio.muted {{
+    color: rgba({int(fg[1:3],16)},{int(fg[3:5],16)},{int(fg[5:7],16)},0.3);
+}}
+
+#tray {{
+    padding: 4px 8px;
+}}
+
+#tray > .passive {{
+    -gtk-icon-effect: dim;
+}}
+
+#tray > .needs-attention {{
+    -gtk-icon-effect: highlight;
+    background-color: #f38ba8;
+    border-radius: 12px;
+    animation: attention-blink 0.8s ease-in-out infinite;
+}}
+
+@keyframes attention-blink {{
+    0%, 100% {{ opacity: 1; }}
+    50% {{ opacity: 0.5; }}
+}}
+
+#temperature {{
+    color: {fg};
+}}
+
+#temperature.critical {{
+    color: #f38ba8;
+    animation: temp-pulse 1s ease-in-out infinite;
+}}
+
+@keyframes temp-pulse {{
+    0%, 100% {{ opacity: 1; }}
+    50% {{ opacity: 0.7; }}
+}}
+
+#cpu, #memory {{
+    color: {fg};
+}}
+
+tooltip {{
+    background-color: {bg};
+    border: 1px solid {accent};
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}}
+
+tooltip label {{
+    color: {fg};
+    font-size: 13px;
+}}
 """
         (waybar_dir / "style.css").write_text(css)
         

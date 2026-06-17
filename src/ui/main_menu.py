@@ -3,6 +3,7 @@ Main Menu UI
 Rich TUI for Linux Tweaker
 """
 
+import sys
 from typing import Dict
 
 from rich.console import Console
