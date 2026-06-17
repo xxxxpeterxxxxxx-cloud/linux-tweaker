@@ -575,38 +575,31 @@ tooltip label {{ color: {fg}; }}
         rgba_bg = f"rgba({int(bg[1:3],16)},{int(bg[3:5],16)},{int(bg[5:7],16)},0.92)"
         rgba_entry = f"rgba({int(bg[1:3],16)},{int(bg[3:5],16)},{int(bg[5:7],16)},0.6)"
         
-        rasi = f"""/* linux-tweaker glassmorphism rofi theme */
-configuration {{
-    modi: "drun,run,window";
-    show-icons: true;
-    icon-theme: "Papirus";
-}}
+        rasi = f"""@import "default"
+
 * {{
     background: {rgba_bg};
     foreground: {fg};
     accent: {accent};
     bg-alt: {rgba_entry};
-    border-color: {accent};
-    border: 2px;
-    border-radius: 16px;
-    font: "Inter 13";
 }}
+
 window {{
     width: 800px;
     height: 500px;
     border: 2px solid;
-    border-color: @border-color;
+    border-color: @accent;
     border-radius: 16px;
     background-color: @background;
     padding: 20px;
-    location: center;
 }}
+
 mainbox {{
     background-color: transparent;
     children: [inputbar, listview];
     spacing: 12px;
-    padding: 0;
 }}
+
 inputbar {{
     background-color: @bg-alt;
     border-radius: 12px;
@@ -614,11 +607,13 @@ inputbar {{
     children: [prompt, entry];
     spacing: 10px;
 }}
+
 prompt {{
     background-color: transparent;
     text-color: @accent;
     font: "Inter 14";
 }}
+
 entry {{
     background-color: transparent;
     text-color: @foreground;
@@ -627,6 +622,7 @@ entry {{
     cursor: text;
     font: "Inter 13";
 }}
+
 listview {{
     background-color: transparent;
     border: 0;
@@ -635,30 +631,8 @@ listview {{
     lines: 10;
     fixed-height: false;
     dynamic: true;
-    cursor: default;
-    scrollbar: true;
 }}
-scrollbar {{
-    background-color: transparent;
-    border: 0;
-    width: 4px;
-    padding: 0;
-    handle-color: @accent;
-    handle-width: 4px;
-    border-radius: 2px;
-}}
-message {{
-    background-color: @bg-alt;
-    border-radius: 10px;
-    padding: 8px 12px;
-    text-color: @foreground;
-}}
-error-message {{
-    background-color: rgba(255,100,100,0.2);
-    border-radius: 10px;
-    padding: 8px 12px;
-    text-color: #ff6464;
-}}
+
 element {{
     background-color: transparent;
     text-color: @foreground;
@@ -666,33 +640,22 @@ element {{
     padding: 8px 12px;
     spacing: 10px;
 }}
-element normal {{
-    background-color: transparent;
-    text-color: @foreground;
-}}
-element alternate {{
-    background-color: transparent;
-    text-color: @foreground;
-}}
+
 element-icon {{
-    background-color: transparent;
     size: 28px;
 }}
+
 element-text {{
-    background-color: transparent;
-    text-color: inherit;
     vertical-align: 0.5;
 }}
+
 element selected {{
     background-color: @accent;
     text-color: {bg};
 }}
+
 element selected element-text {{
     text-color: {bg};
-    font: "Inter 13";
-}}
-element selected element-icon {{
-    background-color: transparent;
 }}
 """
         rofi_cfg.write_text(rasi)
