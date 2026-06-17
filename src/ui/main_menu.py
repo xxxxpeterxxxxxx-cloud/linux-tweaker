@@ -20,6 +20,7 @@ from hardware_monitor import HardwareMonitor
 from power_tuner import PowerTuner
 from preset_manager import PresetManager
 from theme_engine import GenericThemeEngine, ThemeEngine
+from version import __version__
 
 
 ASCII_LOGO = """
@@ -90,7 +91,9 @@ class MainMenu:
                 self._auto_tune()
             elif choice == "7":
                 self._reset_configs()
-            elif choice == "8" or choice == "q":
+            elif choice == "8":
+                self._health_check()
+            elif choice == "9" or choice == "q":
                 self.console.print("[yellow]Goodbye![/yellow]")
                 break
     
@@ -100,7 +103,7 @@ class MainMenu:
         self.console.print(ASCII_LOGO, style="bold cyan")
 
         info_panel = Panel(
-            f"[bold green]v0.1.0[/bold green]\n\n"
+            f"[bold green]v{__version__}[/bold green]\n\n"
             f"[cyan]┌─ DE/WM:[/cyan] [bold yellow]{self.de_info.name}[/bold yellow]\n"
             f"[cyan]├─ Type:[/cyan] [bold yellow]{self.de_info.type}[/bold yellow]\n"
             f"[cyan]└─ Engine:[/cyan] [bold magenta]{self.de_info.engine}[/bold magenta]",
@@ -130,7 +133,8 @@ class MainMenu:
         menu_table.add_row("[5]", "[bold magenta]💾[/bold magenta] Manage Backups")
         menu_table.add_row("[6]", "[bold magenta]🤖[/bold magenta] Auto-Tune")
         menu_table.add_row("[7]", "[bold red]🧹[/bold red] Reset Configs")
-        menu_table.add_row("[8]", "[bold red]🚪[/bold red] Quit")
+        menu_table.add_row("[8]", "[bold cyan]🏥[/bold cyan] Health Check")
+        menu_table.add_row("[9]", "[bold red]🚪[/bold red] Quit")
 
         self.console.print(menu_table)
         self.console.print("[bold white]╚═══════════════════════════════════════╝[/bold white]")
@@ -299,6 +303,53 @@ class MainMenu:
         self.console.print("[bold yellow]⚙️  Running auto-tune...[/bold yellow]")
         self.power_tuner.auto_tune()
         self.console.print("\n[bold green]✓ Auto-Tune complete![/bold green]")
+        Prompt.ask("\n[dim]Press Enter...[/dim]")
+
+    def _health_check(self):
+        """Run a system health check for ricing dependencies."""
+        import shutil
+        self.console.print(f"\n[bold cyan]╔═══════════════════════════════════════╗[/bold cyan]")
+        self.console.print(f"[bold cyan]║           HEALTH CHECK                ║[/bold cyan]")
+        self.console.print(f"[bold cyan]╚═══════════════════════════════════════╝[/bold cyan]\n")
+
+        checks = [
+            ("Python 3.8+", sys.version_info >= (3, 8)),
+            ("git", shutil.which("git") is not None),
+            ("curl", shutil.which("curl") is not None),
+            ("pip3", shutil.which("pip3") is not None),
+        ]
+
+        # DE-specific checks
+        if self.de_info.engine == "HyprlandThemeEngine":
+            checks.extend([
+                ("hyprctl", shutil.which("hyprctl") is not None),
+                ("swww", shutil.which("swww") is not None),
+                ("waybar", shutil.which("waybar") is not None),
+                ("rofi", shutil.which("rofi") is not None),
+            ])
+        elif self.de_info.engine == "GnomeThemeEngine":
+            checks.extend([
+                ("gsettings", shutil.which("gsettings") is not None),
+            ])
+
+        table = Table(show_header=True)
+        table.add_column("[bold cyan]Dependency[/bold cyan]", style="cyan")
+        table.add_column("[bold cyan]Status[/bold cyan]", style="white")
+
+        all_ok = True
+        for name, ok in checks:
+            status = "[bold green]✓ OK[/bold green]" if ok else "[bold red]✗ Missing[/bold red]"
+            if not ok:
+                all_ok = False
+            table.add_row(name, status)
+
+        self.console.print(table)
+
+        if all_ok:
+            self.console.print("\n[bold green]✓ All dependencies satisfied![/bold green]")
+        else:
+            self.console.print("\n[bold yellow]⚠ Some dependencies are missing. Install them with your package manager.[/bold yellow]")
+
         Prompt.ask("\n[dim]Press Enter...[/dim]")
 
     def _reset_configs(self):

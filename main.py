@@ -106,6 +106,43 @@ def do_power_tune():
     return 0
 
 
+def do_health_check(de_info):
+    """Check system health and dependencies."""
+    import shutil
+    print("\n=== System Health Check ===\n")
+    checks = [
+        ("Python 3.8+", sys.version_info >= (3, 8)),
+        ("git", shutil.which("git") is not None),
+        ("curl", shutil.which("curl") is not None),
+        ("pip3", shutil.which("pip3") is not None),
+    ]
+    if de_info.engine == "HyprlandThemeEngine":
+        checks.extend([
+            ("hyprctl", shutil.which("hyprctl") is not None),
+            ("swww", shutil.which("swww") is not None),
+            ("waybar", shutil.which("waybar") is not None),
+            ("rofi", shutil.which("rofi") is not None),
+        ])
+    elif de_info.engine == "GnomeThemeEngine":
+        checks.append(("gsettings", shutil.which("gsettings") is not None))
+    elif de_info.engine == "PlasmaThemeEngine":
+        checks.append(("plasmashell", shutil.which("plasmashell") is not None))
+
+    all_ok = True
+    for name, ok in checks:
+        status = "OK" if ok else "MISSING"
+        if not ok:
+            all_ok = False
+        print(f"  {'[OK]' if ok else '[MISSING]'} {name}")
+
+    print()
+    if all_ok:
+        print("All dependencies satisfied!")
+    else:
+        print("Some dependencies are missing. Install them with your package manager.")
+    return 0 if all_ok else 1
+
+
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -120,6 +157,7 @@ Examples:
   %(prog)s --restore <backup-id>   Restore a backup
   %(prog)s --monitor                Show hardware stats
   %(prog)s --tune                   Auto-tune power profile
+  %(prog)s --doctor                 Check system health
         """,
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -130,6 +168,7 @@ Examples:
     parser.add_argument("--monitor", action="store_true", help="Show hardware monitoring")
     parser.add_argument("--tune", action="store_true", help="Auto-tune power profile")
     parser.add_argument("--force-de", metavar="DE", help="Force DE engine (gnome, plasma, xfce, hyprland, sway, i3, bspwm, lxqt, mate)")
+    parser.add_argument("--doctor", action="store_true", help="Check system health and dependencies")
     parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
     parser.add_argument("-q", "--quiet", action="store_true", help="Suppress non-error output")
     args = parser.parse_args()
@@ -206,6 +245,8 @@ Examples:
         return show_monitoring()
     elif args.tune:
         return do_power_tune()
+    elif args.doctor:
+        return do_health_check(de_info)
 
     # Interactive mode
     print(f"Linux Tweaker v{__version__}")
