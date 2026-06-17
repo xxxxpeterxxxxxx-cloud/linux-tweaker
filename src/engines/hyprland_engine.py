@@ -11,6 +11,7 @@ from datetime import datetime
 from pathlib import Path
 
 from theme_engine import Preset, PreviewResult, ThemeEngine
+from version import __version__
 
 
 class HyprlandThemeEngine(ThemeEngine):

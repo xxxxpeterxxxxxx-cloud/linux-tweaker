@@ -3,9 +3,11 @@ Theme Engine Base Classes
 Abstract base classes for modular desktop theming engines.
 """
 
+import os
 import shutil
 import subprocess
 import tarfile
+import time
 import zipfile
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -100,7 +102,6 @@ class ThemeEngine(ABC):
 
     def _download_file(self, url: str, dest: Path, retries: int = 2) -> bool:
         """Download a file via curl or wget with retry support. Returns True on success."""
-        import time
         # Basic URL validation to prevent security issues
         if not url or not isinstance(url, str):
             return False
@@ -115,7 +116,7 @@ class ThemeEngine(ABC):
             for downloader in (["curl", "-fsSL", "-A", user_agent, "--connect-timeout", "15", "--max-time", "60", "-o", str(dest), url],
                                ["wget", "-q", "-U", user_agent, "--timeout=15", "-O", str(dest), url]):
                 try:
-                    result = self._run(downloader, check=False)
+                    self._run(downloader, check=False)
                     if dest.exists() and dest.stat().st_size > 1024:
                         return True
                     # If download failed but file exists (partial), remove it
@@ -178,7 +179,6 @@ class ThemeEngine(ABC):
 
     def _install_theme_from_repo(self, name: str, repo_url: str, install_cmd: List[str], dest_dir: Path) -> bool:
         """Download repo tarball and run an install script to install a theme."""
-        import os
         if not install_cmd:
             print(f"  -> [ERROR] No install command provided for {name}")
             return False
