@@ -264,7 +264,6 @@ Examples:
 
 def list_backups():
     """List all available backups."""
-    from pathlib import Path
     backup_dir = Path.home() / ".config" / "linux-tweaker" / "backups"
     if not backup_dir.exists():
         print("No backups found.")
