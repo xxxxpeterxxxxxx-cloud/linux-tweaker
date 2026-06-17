@@ -102,13 +102,27 @@ class HyprlandThemeEngine(ThemeEngine):
             return False
         # Make script executable
         install_script.chmod(0o755)
-        # Run install script interactively so user can answer prompts
-        result = subprocess.run(cmd_to_run, cwd=str(clone_dir))
-        if result.returncode == 0:
-            print(f"  -> {name} installed to {dest_dir}")
-            return True
-        else:
-            print(f"  -> Failed to install {name}")
+        # Check if stdin is a terminal (interactive mode)
+        is_tty = sys.stdin.isatty() if hasattr(sys.stdin, 'isatty') else False
+        # Run install script with timeout to prevent hanging in non-interactive environments
+        try:
+            if is_tty:
+                print(f"  -> Interactive install: answer any prompts in the terminal")
+                result = subprocess.run(cmd_to_run, cwd=str(clone_dir), timeout=300)
+            else:
+                # Non-TTY: run with timeout, try to auto-answer common prompts
+                print(f"  -> Non-interactive install (timeout 60s)...")
+                # Try passing 'echo ""' as stdin to auto-accept defaults
+                result = subprocess.run(cmd_to_run, cwd=str(clone_dir), 
+                                       input="\n", text=True, timeout=60)
+            if result.returncode == 0:
+                print(f"  -> {name} installed to {dest_dir}")
+                return True
+            else:
+                print(f"  -> Failed to install {name} (exit code {result.returncode})")
+                return False
+        except subprocess.TimeoutExpired:
+            print(f"  -> [WARN] Install script for {name} timed out — may need manual run")
             return False
 
     def _replace_line(self, path: Path, key: str, new_value: str):
