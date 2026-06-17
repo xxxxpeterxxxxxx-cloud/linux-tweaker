@@ -33,6 +33,19 @@ This will:
 git clone https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker.git
 cd linux-tweaker
 pip install --user -r requirements.txt
+
+# Run directly
+python3 main.py
+
+# Or create wrapper commands (optional)
+echo '#!/usr/bin/env bash' > ~/.local/bin/linux-tweaker
+echo "exec python3 $(pwd)/main.py \"\$@\"" >> ~/.local/bin/linux-tweaker
+chmod +x ~/.local/bin/linux-tweaker
+ln -sf ~/.local/bin/linux-tweaker ~/.local/bin/tweak
+
+# Add ~/.local/bin to PATH if not already there
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ## Usage

@@ -92,27 +92,51 @@ ln -sf "$BIN_DIR/linux-tweaker" "$BIN_DIR/tweak"
 # Add to PATH if needed
 if ! echo "$PATH" | grep -q "$BIN_DIR"; then
     SHELL_RC=""
-    if [[ -f "$HOME/.bashrc" ]]; then
-        SHELL_RC="$HOME/.bashrc"
-    elif [[ -f "$HOME/.zshrc" ]]; then
+    # Detect shell and config file
+    if [[ -n "$ZSH_VERSION" ]]; then
         SHELL_RC="$HOME/.zshrc"
+    elif [[ -n "$FISH_VERSION" ]]; then
+        SHELL_RC="$HOME/.config/fish/config.fish"
+    elif [[ -n "$BASH_VERSION" ]]; then
+        SHELL_RC="$HOME/.bashrc"
+    else
+        # Fallback to bashrc
+        SHELL_RC="$HOME/.bashrc"
     fi
     
     if [[ -n "$SHELL_RC" ]]; then
-        echo "" >> "$SHELL_RC"
-        echo "# Linux Tweaker" >> "$SHELL_RC"
-        echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$SHELL_RC"
-        echo "==> Added $BIN_DIR to PATH in $(basename "$SHELL_RC")"
-        echo "    Run: source $SHELL_RC"
+        # Create config file if it doesn't exist
+        if [[ ! -f "$SHELL_RC" ]]; then
+            mkdir -p "$(dirname "$SHELL_RC")"
+            touch "$SHELL_RC"
+        fi
+        
+        # Check if already added
+        if ! grep -q "linux-tweaker PATH" "$SHELL_RC" 2>/dev/null; then
+            echo "" >> "$SHELL_RC"
+            echo "# Linux Tweaker" >> "$SHELL_RC"
+            if [[ "$SHELL_RC" == *"/config.fish" ]]; then
+                echo "fish_add_path -a \$HOME/.local/bin" >> "$SHELL_RC"
+            else
+                echo "export PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$SHELL_RC"
+            fi
+            echo "==> Added $BIN_DIR to PATH in $SHELL_RC"
+            echo "    Run: source $SHELL_RC"
+            echo "    Or restart your terminal"
+        fi
     fi
 fi
 
 # Add rofi shell function to prevent "unsure what to do" error
-for RC in "$HOME/.bashrc" "$HOME/.zshrc"; do
+for RC in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.config/fish/config.fish"; do
     if [[ -f "$RC" ]] && ! grep -q 'linux-tweaker: rofi default to drun' "$RC" 2>/dev/null; then
         echo "" >> "$RC"
         echo "# linux-tweaker: rofi default to drun" >> "$RC"
-        echo "rofi() { if [ \$# -eq 0 ]; then command rofi -show drun; else command rofi \"\$@\"; fi }" >> "$RC"
+        if [[ "$RC" == *"/config.fish" ]]; then
+            echo "function rofi; if test (count \$argv) -eq 0; command rofi -show drun; else; command rofi \$argv; end; end" >> "$RC"
+        else
+            echo "rofi() { if [ \$# -eq 0 ]; then command rofi -show drun; else command rofi \"\$@\"; fi }" >> "$RC"
+        fi
     fi
 done
 
