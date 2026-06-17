@@ -76,6 +76,15 @@ if ! echo "$PATH" | grep -q "$BIN_DIR"; then
     fi
 fi
 
+# Add rofi shell function to prevent "unsure what to do" error
+for RC in "$HOME/.bashrc" "$HOME/.zshrc"; do
+    if [[ -f "$RC" ]] && ! grep -q 'linux-tweaker: rofi default to drun' "$RC" 2>/dev/null; then
+        echo "" >> "$RC"
+        echo "# linux-tweaker: rofi default to drun" >> "$RC"
+        echo "rofi() { if [ \$# -eq 0 ]; then command rofi -show drun; else command rofi \"\$@\"; fi }" >> "$RC"
+    fi
+done
+
 echo ""
 echo "==> Installation complete!"
 echo ""
@@ -87,4 +96,6 @@ echo ""
 echo "Or use the short alias:"
 echo "  tweak --list"
 echo "  tweak --apply 'Blue Dream'"
+echo ""
+echo "Note: typing 'rofi' in terminal now defaults to app launcher"
 echo ""
