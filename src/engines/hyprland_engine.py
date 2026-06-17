@@ -511,8 +511,6 @@ configuration {{
     location: 0;
     fixed-num-lines: true;
     hover-select: true;
-    me-select-entry: "";
-    me-accept-entry: [MousePrimary];
 }}
 * {{
     background: {rgba_bg};
