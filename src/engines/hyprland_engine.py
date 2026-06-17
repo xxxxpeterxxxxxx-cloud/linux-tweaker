@@ -30,7 +30,7 @@ class HyprlandThemeEngine(ThemeEngine):
 
     def _check_dependencies(self):
         """Check if required tools are installed. Warn if missing."""
-        deps = ["gsettings", "git"]
+        deps = ["git"]
         if self.wm == "hyprland":
             deps.extend(["hyprctl", "swww", "waybar", "rofi"])
         elif self.wm == "sway":

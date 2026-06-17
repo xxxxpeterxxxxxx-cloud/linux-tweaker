@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
+
+      - name: Test with pytest
+        run: |
+          cd /home/runner/work/linux-tweaker/linux-tweaker
+          PYTHONPATH=src pytest tests/ -v --tb=short
+
+      - name: Check syntax of all Python files
+        run: |
+          python -m py_compile src/*.py src/engines/*.py
+
+      - name: Validate JSON presets
+        run: |
+          python -c "
+import json, sys
+from pathlib import Path
+errors = 0
+for f in Path('presets').glob('*.json'):
+    try:
+        d = json.load(open(f))
+        assert 'name' in d, f'{f.name}: missing name'
+        assert 'themes' in d, f'{f.name}: missing themes'
+    except Exception as e:
+        print(f'ERROR in {f.name}: {e}')
+        errors += 1
+sys.exit(1 if errors else 0)
+"

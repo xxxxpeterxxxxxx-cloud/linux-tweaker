@@ -89,15 +89,18 @@ class ThemeEngine(ABC):
                 changes.append({"key": key, "current": current, "new": new_value})
         return changes
 
-    def _run(self, cmd: List[str], check: bool = True, cwd: Optional[str] = None) -> subprocess.CompletedProcess:
+    def _run(self, cmd: List[str], check: bool = True, cwd: Optional[str] = None, timeout: Optional[int] = None) -> subprocess.CompletedProcess:
         """Run a shell command safely."""
         kwargs = {"capture_output": True, "text": True, "check": check}
         if cwd:
             kwargs["cwd"] = cwd
+        if timeout:
+            kwargs["timeout"] = timeout
         return subprocess.run(cmd, **kwargs)
 
-    def _download_file(self, url: str, dest: Path) -> bool:
-        """Download a file via curl or wget. Returns True on success."""
+    def _download_file(self, url: str, dest: Path, retries: int = 2) -> bool:
+        """Download a file via curl or wget with retry support. Returns True on success."""
+        import time
         # Basic URL validation to prevent security issues
         if not url or not isinstance(url, str):
             return False
@@ -107,17 +110,21 @@ class ThemeEngine(ABC):
         dest.parent.mkdir(parents=True, exist_ok=True)
         # Add user-agent to avoid GitHub rate limiting
         user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        for downloader in (["curl", "-fsSL", "-A", user_agent, "-o", str(dest), url],
-                           ["wget", "-q", "-U", user_agent, "-O", str(dest), url]):
-            try:
-                result = self._run(downloader, check=False)
-                if dest.exists() and dest.stat().st_size > 1024:
-                    return True
-                # If download failed but file exists (partial), remove it
-                if dest.exists():
-                    dest.unlink()
-            except FileNotFoundError:
-                continue
+        
+        for attempt in range(retries + 1):
+            for downloader in (["curl", "-fsSL", "-A", user_agent, "--connect-timeout", "15", "--max-time", "60", "-o", str(dest), url],
+                               ["wget", "-q", "-U", user_agent, "--timeout=15", "-O", str(dest), url]):
+                try:
+                    result = self._run(downloader, check=False)
+                    if dest.exists() and dest.stat().st_size > 1024:
+                        return True
+                    # If download failed but file exists (partial), remove it
+                    if dest.exists():
+                        dest.unlink()
+                except FileNotFoundError:
+                    continue
+            if attempt < retries:
+                time.sleep(2 ** attempt)  # Exponential backoff
         return False
 
     def _download_wallpaper(self, url: str, dest_dir: Path) -> Optional[Path]:
@@ -172,12 +179,16 @@ class ThemeEngine(ABC):
     def _install_theme_from_repo(self, name: str, repo_url: str, install_cmd: List[str], dest_dir: Path) -> bool:
         """Download repo tarball and run an install script to install a theme."""
         import os
+        if not install_cmd:
+            print(f"  -> [ERROR] No install command provided for {name}")
+            return False
         dest = dest_dir / name
         if dest.exists():
             print(f"  -> {name} already installed")
             return True
         # Derive tarball URL from repo URL
-        tarball_url = repo_url.replace("https://github.com/", "https://github.com/") + "/archive/refs/heads/main.tar.gz"
+        repo_url = repo_url.rstrip("/")
+        tarball_url = repo_url + "/archive/refs/heads/main.tar.gz"
         tmp_dir = self.backup_dir / f"repo_{name}_tmp"
         archive = self.backup_dir / f"repo_{name}.tar.gz"
         if tmp_dir.exists():
@@ -246,7 +257,11 @@ class ThemeEngine(ABC):
         # Expand ~ in install command args
         expanded_cmd = [os.path.expanduser(arg) for arg in install_cmd]
         print(f"  -> Running install script for {name}...")
-        r = self._run(expanded_cmd, check=False, cwd=str(src_dir))
+        try:
+            r = self._run(expanded_cmd, check=False, cwd=str(src_dir), timeout=120)
+        except subprocess.TimeoutExpired:
+            print(f"  -> [WARN] Install script timed out after 120s, checking if theme exists...")
+            r = subprocess.CompletedProcess(args=expanded_cmd, returncode=1, stdout="", stderr="timeout")
         if r.returncode != 0:
             print(f"  -> [WARN] Install script may have had issues, checking if theme exists...")
         # Verify the theme was installed

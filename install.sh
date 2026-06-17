@@ -2,28 +2,45 @@
 # One-liner installer for linux-tweaker
 # Usage: curl -fsSL https://raw.githubusercontent.com/xxxxpeterxxxxxx-cloud/linux-tweaker/main/install.sh | bash
 
-set -e
+set -euo pipefail
 
 REPO_URL="https://github.com/xxxxpeterxxxxxx-cloud/linux-tweaker"
 INSTALL_DIR="${HOME}/.local/share/linux-tweaker"
 BIN_DIR="${HOME}/.local/bin"
 
-echo "==> Linux Tweaker Installer"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}==>${NC} Linux Tweaker Installer"
 echo ""
 
 # Check Python version
 python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))' 2>/dev/null || echo "0")
 if [[ "$python_version" < "3.8" ]]; then
-    echo "ERROR: Python 3.8+ required. Found: $python_version"
+    echo -e "${RED}ERROR:${NC} Python 3.8+ required. Found: $python_version"
+    echo "Install Python 3.8+ and try again."
     exit 1
 fi
+echo -e "${GREEN}✓${NC} Python $python_version"
 
-# Check for git
-if ! command -v git &>/dev/null; then
-    echo "ERROR: git is required. Install it first:"
-    echo "  Fedora: sudo dnf install git"
-    echo "  Ubuntu: sudo apt install git"
-    exit 1
+# Check for required tools
+for tool in git curl; do
+    if ! command -v "$tool" &>/dev/null; then
+        echo -e "${RED}ERROR:${NC} $tool is required. Install it first:"
+        echo "  Fedora: sudo dnf install $tool"
+        echo "  Ubuntu/Debian: sudo apt install $tool"
+        echo "  Arch: sudo pacman -S $tool"
+        exit 1
+    fi
+    echo -e "${GREEN}✓${NC} $tool"
+done
+
+# Check for pip
+if ! command -v pip3 &>/dev/null; then
+    echo -e "${YELLOW}WARN:${NC} pip3 not found. Will try without installing Python deps."
+    SKIP_PIP=1
 fi
 
 # Create directories
@@ -31,22 +48,34 @@ mkdir -p "$INSTALL_DIR" "$BIN_DIR"
 
 # Clone or update
 if [[ -d "$INSTALL_DIR/.git" ]]; then
-    echo "==> Updating existing installation..."
+    echo -e "${GREEN}==>${NC} Updating existing installation..."
     cd "$INSTALL_DIR"
-    git pull --ff-only
+    if ! git pull --ff-only; then
+        echo -e "${YELLOW}WARN:${NC} git pull failed, re-cloning..."
+        cd "$HOME"
+        rm -rf "$INSTALL_DIR"
+        git clone --depth=1 "$REPO_URL" "$INSTALL_DIR"
+    fi
 else
-    echo "==> Cloning linux-tweaker..."
+    echo -e "${GREEN}==>${NC} Cloning linux-tweaker..."
     rm -rf "$INSTALL_DIR"
-    git clone --depth=1 "$REPO_URL" "$INSTALL_DIR"
+    if ! git clone --depth=1 "$REPO_URL" "$INSTALL_DIR"; then
+        echo -e "${RED}ERROR:${NC} Failed to clone repository"
+        exit 1
+    fi
 fi
 
 # Install Python dependencies
-echo "==> Installing Python dependencies..."
-cd "$INSTALL_DIR"
-pip3 install --user -r requirements.txt 2>/dev/null || {
-    echo "WARN: pip install failed, trying with --break-system-packages..."
-    pip3 install --user --break-system-packages -r requirements.txt 2>/dev/null || true
-}
+if [[ "${SKIP_PIP:-0}" == "0" ]]; then
+    echo -e "${GREEN}==>${NC} Installing Python dependencies..."
+    cd "$INSTALL_DIR"
+    if ! pip3 install --user -r requirements.txt 2>/dev/null; then
+        echo -e "${YELLOW}WARN:${NC} pip install failed, trying with --break-system-packages..."
+        pip3 install --user --break-system-packages -r requirements.txt 2>/dev/null || {
+            echo -e "${YELLOW}WARN:${NC} Could not install dependencies. Some features may not work."
+        }
+    fi
+fi
 
 # Create wrapper script
 cat > "$BIN_DIR/linux-tweaker" << 'EOF'

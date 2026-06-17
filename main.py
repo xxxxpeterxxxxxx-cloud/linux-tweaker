@@ -5,12 +5,14 @@ Modular theming and tuning for immutable Linux systems.
 """
 
 import argparse
+import logging
 import sys
 from pathlib import Path
 
 # Ensure src/ is importable regardless of working directory
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
+from version import __version__
 from de_detector import DEDetector, DEInfo
 from engines import (
     GenericThemeEngine, GnomeThemeEngine, PlasmaThemeEngine,
@@ -107,50 +109,81 @@ def do_power_tune():
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Linux Tweaker - Rice & Optimize Tool",
+        description=f"Linux Tweaker v{__version__} - Rice & Optimize Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   %(prog)s                          Launch interactive menu
   %(prog)s --list                   List all presets
-  %(prog)s --apply "Minimal Dark" Apply a preset
-  %(prog)s --preview "Nordic"       Preview a preset
+  %(prog)s --apply "Blue Dream"     Apply a preset
+  %(prog)s --preview "Blue Dream"   Preview a preset
+  %(prog)s --restore <backup-id>   Restore a backup
   %(prog)s --monitor                Show hardware stats
   %(prog)s --tune                   Auto-tune power profile
         """,
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     parser.add_argument("--list", action="store_true", help="List available presets")
     parser.add_argument("--apply", metavar="PRESET", help="Apply a preset by name")
     parser.add_argument("--preview", metavar="PRESET", help="Preview a preset")
+    parser.add_argument("--restore", metavar="BACKUP_ID", help="Restore a backup by ID (use 'latest' for most recent)")
     parser.add_argument("--monitor", action="store_true", help="Show hardware monitoring")
     parser.add_argument("--tune", action="store_true", help="Auto-tune power profile")
     parser.add_argument("--force-de", metavar="DE", help="Force DE engine (gnome, plasma, xfce, hyprland, sway, i3, bspwm, lxqt, mate)")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
+    parser.add_argument("-q", "--quiet", action="store_true", help="Suppress non-error output")
     args = parser.parse_args()
+
+    # Configure logging
+    if args.quiet:
+        logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
+    elif args.verbose:
+        logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
+    else:
+        logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+    # Handle restore first (DE-agnostic)
+    if args.restore:
+        from engines import HyprlandThemeEngine
+        engine = HyprlandThemeEngine()  # Any engine works for restore
+        backup_id = args.restore
+        if backup_id.lower() == "latest":
+            backups = sorted((engine.backup_dir).glob("backup_*"))
+            if not backups:
+                print("No backups found.")
+                return 1
+            backup_id = backups[-1].name.replace("backup_", "")
+        success = engine.restore_backup(backup_id)
+        return 0 if success else 1
 
     # Detect DE or use forced DE
     detector = DEDetector()
-    if args.force_de:
-        forced = args.force_de.lower()
-        engine_map_cli = {
-            "gnome": "GnomeThemeEngine",
-            "plasma": "PlasmaThemeEngine",
-            "kde": "PlasmaThemeEngine",
-            "xfce": "XfceThemeEngine",
-            "hyprland": "HyprlandThemeEngine",
-            "sway": "SwayThemeEngine",
-            "i3": "I3ThemeEngine",
-            "bspwm": "BspwmThemeEngine",
-            "lxqt": "LxqtThemeEngine",
-            "mate": "MateThemeEngine",
-        }
-        engine_name = engine_map_cli.get(forced)
-        if engine_name:
-            de_info = DEInfo(name=forced.title(), type="DE", engine=engine_name, detected_by="--force-de")
+    try:
+        if args.force_de:
+            forced = args.force_de.lower()
+            engine_map_cli = {
+                "gnome": "GnomeThemeEngine",
+                "plasma": "PlasmaThemeEngine",
+                "kde": "PlasmaThemeEngine",
+                "xfce": "XfceThemeEngine",
+                "hyprland": "HyprlandThemeEngine",
+                "sway": "SwayThemeEngine",
+                "i3": "I3ThemeEngine",
+                "bspwm": "BspwmThemeEngine",
+                "lxqt": "LxqtThemeEngine",
+                "mate": "MateThemeEngine",
+            }
+            engine_name = engine_map_cli.get(forced)
+            if engine_name:
+                de_info = DEInfo(name=forced.title(), type="DE", engine=engine_name, detected_by="--force-de")
+            else:
+                print(f"Error: Unknown DE '{forced}'. Valid: {', '.join(engine_map_cli.keys())}")
+                return 1
         else:
-            print(f"Error: Unknown DE '{forced}'. Valid: {', '.join(engine_map_cli.keys())}")
-            return 1
-    else:
-        de_info = detector.detect()
+            de_info = detector.detect()
+    except Exception as e:
+        logging.error(f"DE detection failed: {e}")
+        de_info = DEInfo(name="Unknown", type="Unknown", engine="GenericThemeEngine", detected_by="fallback")
 
     manager = PresetManager()
 
@@ -175,7 +208,7 @@ Examples:
         return do_power_tune()
 
     # Interactive mode
-    print("🚀 Linux Tweaker v0.1.0")
+    print(f"Linux Tweaker v{__version__}")
     print("Rice & Optimize for Immutable OS\n")
     print(f"Detected environment: {de_info.name} ({de_info.type})")
     print(f"Engine: {de_info.engine}\n")
