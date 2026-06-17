@@ -567,6 +567,28 @@ listview {{
     fixed-height: false;
     dynamic: true;
     cursor: default;
+    scrollbar: true;
+}}
+scrollbar {{
+    background-color: transparent;
+    border: 0;
+    width: 4px;
+    padding: 0;
+    handle-color: @accent;
+    handle-width: 4px;
+    border-radius: 2px;
+}}
+message {{
+    background-color: @bg-alt;
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-color: @foreground;
+}}
+error-message {{
+    background-color: rgba(255,100,100,0.2);
+    border-radius: 10px;
+    padding: 8px 12px;
+    text-color: #ff6464;
 }}
 element {{
     background-color: transparent;
@@ -574,6 +596,14 @@ element {{
     border-radius: 10px;
     padding: 8px 12px;
     spacing: 10px;
+}}
+element normal {{
+    background-color: transparent;
+    text-color: @foreground;
+}}
+element alternate {{
+    background-color: transparent;
+    text-color: @foreground;
 }}
 element-icon {{
     background-color: transparent;
@@ -590,6 +620,7 @@ element selected {{
 }}
 element selected element-text {{
     text-color: {bg};
+    font: "Inter 13";
 }}
 element selected element-icon {{
     background-color: transparent;
