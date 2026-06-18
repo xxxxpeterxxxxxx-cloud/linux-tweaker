@@ -13,6 +13,13 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
 
+# Constants
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 100MB
+BACKUP_DIR = Path.home() / ".config" / "linux-tweaker" / "backups"
+# Secure file permissions
+SECURE_FILE_MODE = 0o600  # rw-------
+SECURE_DIR_MODE = 0o700  # rwx------
+
 
 class BackupStatus(Enum):
     """Backup operation status."""
@@ -146,17 +153,20 @@ class FileManager:
                 
                 if target_path is None:
                     # Fallback: try to reconstruct original path
-                    original_name = backup_path.name.rsplit("_", 1)[0]
+                    name_parts = backup_path.name.rsplit("_", 1)
+                    if len(name_parts) == 2:
+                        original_name = name_parts[0]
+                    else:
+                        original_name = backup_path.name
                     target_path = backup_path.parent.parent / original_name
             
             target_path = Path(target_path)
             
-            # Create backup of current state before restoring
-            if target_path.exists():
-                self.create_backup(target_path)
-            
-            # Restore backup
+            # Restore backup (no backup of current state to avoid conflicts)
             if backup_path.is_file():
+                # Remove target first to ensure clean restore
+                if target_path.exists():
+                    target_path.unlink()
                 shutil.copy2(backup_path, target_path)
             elif backup_path.is_dir():
                 # Remove existing directory if it exists
@@ -188,18 +198,35 @@ class FileManager:
         try:
             file_path = Path(file_path)
             
+            # Validate file size before writing
+            content_size = len(content.encode('utf-8'))
+            if content_size > MAX_FILE_SIZE:
+                self._errors.append(f"Content too large: {content_size} bytes (max {MAX_FILE_SIZE})")
+                return BackupStatus.FAILED
+            
             # Create backup if requested and file exists
             if create_backup and file_path.exists():
                 backup_status = self.create_backup(file_path)
                 if backup_status == BackupStatus.FAILED:
                     return BackupStatus.FAILED
             
-            # Ensure parent directory exists
-            file_path.parent.mkdir(parents=True, exist_ok=True)
+            # Ensure parent directory exists with secure permissions
+            file_path.parent.mkdir(parents=True, exist_ok=True, mode=SECURE_DIR_MODE)
             
-            # Write content
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(content)
+            # Write content with encoding error handling
+            try:
+                with open(file_path, 'w', encoding='utf-8') as f:
+                    f.write(content)
+            except UnicodeEncodeError as e:
+                self._errors.append(f"Encoding error writing {file_path}: {e}")
+                return BackupStatus.FAILED
+            
+            # Set secure file permissions
+            try:
+                file_path.chmod(SECURE_FILE_MODE)
+            except (PermissionError, OSError) as e:
+                self._errors.append(f"Failed to set secure permissions: {e}")
+                # Continue anyway - file was written successfully
             
             return BackupStatus.SUCCESS
             
@@ -232,6 +259,9 @@ class FileManager:
                 
         except (PermissionError, OSError, IOError) as e:
             self._errors.append(f"Failed to read {file_path}: {e}")
+            return None
+        except UnicodeDecodeError as e:
+            self._errors.append(f"Encoding error reading {file_path}: {e}")
             return None
         except Exception as e:
             self._errors.append(f"Unexpected error reading {file_path}: {e}")

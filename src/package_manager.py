@@ -161,6 +161,13 @@ class PackageManager:
         """
         try:
             import shutil
+            from urllib.parse import urlparse, unquote
+            
+            # Validate URL
+            parsed = urlparse(url)
+            if not parsed.scheme or not parsed.netloc:
+                self._errors.append(f"Invalid URL: {url}")
+                return InstallStatus.FAILED
             
             # Set default install directory
             if install_dir is None:
@@ -169,8 +176,23 @@ class PackageManager:
             install_dir = Path(install_dir)
             install_dir.mkdir(parents=True, exist_ok=True)
             
-            # Download AppImage
-            filename = url.split("/")[-1]
+            # Check disk space (require at least 100MB free)
+            try:
+                import shutil
+                disk_usage = shutil.disk_usage(install_dir)
+                if disk_usage.free < 100 * 1024 * 1024:  # 100MB
+                    self._errors.append("Insufficient disk space for download")
+                    return InstallStatus.FAILED
+            except Exception as e:
+                self._errors.append(f"Could not check disk space: {e}")
+                return InstallStatus.FAILED
+            
+            # Download AppImage with safe filename extraction
+            filename = unquote(parsed.path.split("/")[-1])
+            if not filename or filename.startswith(".") or "/" in filename or "\\" in filename:
+                self._errors.append(f"Invalid filename in URL: {url}")
+                return InstallStatus.FAILED
+            
             appimage_path = install_dir / filename
             
             # Use curl to download
@@ -256,12 +278,12 @@ class PackageManager:
             ],
             "communication": [
                 "org.signal.Signal",
-                "discord",
+                "com.discordapp.Discord",
                 "org.telegram.desktop"
             ],
             "productivity": [
                 "org.libreoffice.LibreOffice",
-                "org.gnome.World",
+                "org.gnome.Calendar",
                 "org.gnome.Evolution"
             ],
             "utilities": [
@@ -284,9 +306,9 @@ class PackageManager:
         """
         essential_apps = [
             "org.mozilla.firefox",
-            "org.gnome.World",
+            "org.gnome.Calendar",
             "org.libreoffice.LibreOffice",
-            "discord",
+            "com.discordapp.Discord",
             "org.telegram.desktop",
             "io.github.mpv.Mpv"
         ]

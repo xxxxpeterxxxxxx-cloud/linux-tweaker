@@ -9,10 +9,19 @@ Coordinates between PackageManager and ConfigManager for complete setup.
 from typing import Dict, List, Optional, Callable
 from enum import Enum
 from pathlib import Path
+import os
+import stat
 
 from src.package_manager import PackageManager, InstallStatus
 from src.config_manager import ConfigManager, ConfigStatus
 from src.system_checker import WindowManager
+
+# Constants
+MAX_PARTIAL_ERRORS = 3
+# Maximum file size for operations (100MB)
+MAX_FILE_SIZE = 100 * 1024 * 1024
+# Maximum backup age in days (30 days)
+MAX_BACKUP_AGE_DAYS = 30
 
 
 class PresetType(Enum):
@@ -115,7 +124,7 @@ class PresetApplicationManager:
             if not self._errors:
                 self._applied_presets.append(preset_type.value)
                 return PresetStatus.SUCCESS
-            elif len(self._errors) < 3:
+            elif len(self._errors) < MAX_PARTIAL_ERRORS:
                 return PresetStatus.PARTIAL
             else:
                 return PresetStatus.FAILED
@@ -193,141 +202,9 @@ class PresetApplicationManager:
                 
                 # Apply Rofi config
                 self.add_progress("Applying Rofi configuration...")
-                rofi_config = """configuration {
-    modi: "drun,run,window,ssh";
-    show-icons: true;
-    icon-theme: "Papirus";
-    display-drun: "Apps";
-    display-run: "Run";
-    display-window: "Windows";
-    display-ssh: "SSH";
-    drun-display-format: "{name}";
-    window-format: "{w} · {c}";
-    sidebar-mode: false;
-    matching: "fuzzy";
-    sort: true;
-}
-
-@theme "/var/home/julius/.config/rofi/themes/catppuccin.rasi"'''
+                rofi_config = 'configuration {\n    modi: "drun,run,window,ssh";\n    show-icons: true;\n    icon-theme: "Papirus";\n    display-drun: "Apps";\n    display-run: "Run";\n    display-window: "Windows";\n    display-ssh: "SSH";\n    drun-display-format: "{name}";\n    window-format: "{w} · {c}";\n    sidebar-mode: false;\n    matching: "fuzzy";\n    sort: true;\n}\n\n@theme "' + str(Path.home() / '.config' / 'rofi' / 'themes' / 'catppuccin.rasi') + '"'
                 
-                rofi_theme = '''/* Catppuccin Theme for Ropi */
-* {
-    font: "JetBrains Mono 12";
-    background-color: #1e1e2e;
-    text-color: #cdd6f4;
-    selected-background: #89b4fa;
-    selected-text: #1e1e2e;
-    border-color: #89b4fa;
-    separator-color: #45475a;
-}
-
-window {
-    background-color: #1e1e2e;
-    border: 2px;
-    border-color: #89b4fa;
-    border-radius: 12px;
-    padding: 20px;
-}
-
-mainbox {
-    background-color: #1e1e2e;
-    border: 0;
-    padding: 0;
-}
-
-inputbar {
-    background-color: #313244;
-    border: 0;
-    border-radius: 8px;
-    padding: 12px;
-    margin: 0 0 15px 0;
-    children: [ prompt, textbox-prompt-colon, entry, case-indicator ];
-}
-
-prompt {
-    background-color: transparent;
-    text-color: #89b4fa;
-    padding: 0 8px 0 0;
-}
-
-textbox-prompt-colon {
-    background-color: transparent;
-    text-color: #cdd6f4;
-    padding: 0;
-    expand: false;
-    str: ":";
-}
-
-entry {
-    background-color: transparent;
-    text-color: #cdd6f4;
-    padding: 0;
-    placeholder: "Search...";
-    placeholder-color: #6c7086;
-}
-
-case-indicator {
-    background-color: transparent;
-    text-color: #a6e3a1;
-    padding: 0 8px 0 0;
-}
-
-listbox {
-    background-color: #1e1e2e;
-    border: 0;
-    padding: 0;
-    spacing: 4px;
-}
-
-element {
-    background-color: #313244;
-    border: 0;
-    border-radius: 8px;
-    padding: 10px;
-    children: [ element-icon, element-text ];
-    spacing: 10px;
-}
-
-element normal.normal {
-    background-color: #313244;
-    text-color: #cdd6f4;
-}
-
-element normal.urgent {
-    background-color: #f38ba8;
-    text-color: #1e1e2e;
-}
-
-element normal.active {
-    background-color: #a6e3a1;
-    text-color: #1e1e2e;
-}
-
-element selected.normal {
-    background-color: #89b4fa;
-    text-color: #1e1e2e;
-}
-
-element selected.urgent {
-    background-color: #f38ba8;
-    text-color: #1e1e2e;
-}
-
-element selected.active {
-    background-color: #a6e3a1;
-    text-color: #1e1e2e;
-}
-
-element-icon {
-    background-color: transparent;
-    size: 24px;
-    text-color: #cdd6f4;
-}
-
-element-text {
-    background-color: transparent;
-    text-color: #cdd6f4;
-}"""
+                rofi_theme = '/* Catppuccin Theme for Rofi */\n* {\n    font: "JetBrains Mono 12";\n    background-color: #1e1e2e;\n    text-color: #cdd6f4;\n    selected-background: #89b4fa;\n    selected-text: #1e1e2e;\n    border-color: #89b4fa;\n    separator-color: #45475a;\n}\n\nwindow {\n    background-color: #1e1e2e;\n    border: 2px;\n    border-color: #89b4fa;\n    border-radius: 12px;\n    padding: 20px;\n}\n\nmainbox {\n    background-color: #1e1e2e;\n    border: 0;\n    padding: 0;\n}\n\ninputbar {\n    background-color: #313244;\n    border: 0;\n    border-radius: 8px;\n    padding: 12px;\n    margin: 0 0 15px 0;\n    children: [ prompt, textbox-prompt-colon, entry, case-indicator ];\n}\n\nprompt {\n    background-color: transparent;\n    text-color: #89b4fa;\n    padding: 0 8px 0 0;\n}\n\ntextbox-prompt-colon {\n    background-color: transparent;\n    text-color: #cdd6f4;\n    padding: 0;\n    expand: false;\n    str: ":";\n}\n\nentry {\n    background-color: transparent;\n    text-color: #cdd6f4;\n    padding: 0;\n    placeholder: "Search...";\n    placeholder-color: #6c7086;\n}\n\ncase-indicator {\n    background-color: transparent;\n    text-color: #a6e3a1;\n    padding: 0 8px 0 0;\n}\n\nlistbox {\n    background-color: #1e1e2e;\n    border: 0;\n    padding: 0;\n    spacing: 4px;\n}\n\nelement {\n    background-color: #313244;\n    border: 0;\n    border-radius: 8px;\n    padding: 10px;\n    children: [ element-icon, element-text ];\n    spacing: 10px;\n}\n\nelement normal.normal {\n    background-color: #313244;\n    text-color: #cdd6f4;\n}\n\nelement normal.urgent {\n    background-color: #f38ba8;\n    text-color: #1e1e2e;\n}\n\nelement normal.active {\n    background-color: #a6e3a1;\n    text-color: #1e1e2e;\n}\n\nelement selected.normal {\n    background-color: #89b4fa;\n    text-color: #1e1e2e;\n}\n\nelement selected.urgent {\n    background-color: #f38ba8;\n    text-color: #1e1e2e;\n}\n\nelement selected.active {\n    background-color: #a6e3a1;\n    text-color: #1e1e2e;\n}\n\nelement-icon {\n    background-color: transparent;\n    size: 24px;\n    text-color: #cdd6f4;\n}\n\nelement-text {\n    background-color: transparent;\n    text-color: #cdd6f4;\n}'
                 
                 rofi_status = self.config_manager.apply_rofi_config(rofi_config, rofi_theme)
                 
@@ -335,7 +212,7 @@ element-text {
                     self._errors.append("Failed to apply Rofi config")
                     return PresetStatus.PARTIAL
                 
-                self.add_progress("Applied Ropi configuration")
+                self.add_progress("Applied Rofi configuration")
                 
                 return PresetStatus.SUCCESS
             

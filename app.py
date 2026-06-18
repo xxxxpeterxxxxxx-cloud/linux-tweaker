@@ -55,7 +55,7 @@ class LinuxTweakerApp:
             # Detect window manager
             wm = self.system_checker.detect_window_manager()
             if wm == WindowManager.UNKNOWN:
-                self.ui.add_warning("Unknown window manager detected")
+                self.ui.print_warning("Unknown window manager detected")
             
             # Check dependencies
             deps = self.system_checker.check_critical_dependencies()

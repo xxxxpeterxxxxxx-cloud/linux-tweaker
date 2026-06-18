@@ -47,6 +47,7 @@ class SystemChecker:
         self._window_manager: Optional[WindowManager] = None
         self._dependencies: Dict[str, DependencyStatus] = {}
         self._errors: List[str] = []
+        self._dependency_cache: Dict[str, DependencyStatus] = {}  # Cache for dependency checks
     
     def check_write_permissions(self) -> bool:
         """
@@ -86,7 +87,7 @@ class SystemChecker:
             display = os.environ.get("DISPLAY", "")
             
             # Check for Hyprland
-            if "hyprland" in xdg_current_desktop or wayland_display:
+            if "hyprland" in xdg_current_desktop:
                 try:
                     result = subprocess.run(
                         ["hyprctl", "version"],
@@ -101,7 +102,7 @@ class SystemChecker:
                     pass
             
             # Check for Sway
-            if "sway" in xdg_current_desktop or wayland_display:
+            if "sway" in xdg_current_desktop:
                 try:
                     result = subprocess.run(
                         ["sway", "--version"],
@@ -116,7 +117,7 @@ class SystemChecker:
                     pass
             
             # Check for i3
-            if "i3" in xdg_current_desktop or display:
+            if "i3" in xdg_current_desktop:
                 try:
                     result = subprocess.run(
                         ["i3", "--version"],
@@ -164,12 +165,19 @@ class SystemChecker:
         Returns:
             DependencyStatus: Status of the dependency.
         """
+        # Check cache first
+        if command in self._dependency_cache:
+            self._dependencies[command] = self._dependency_cache[command]
+            return self._dependency_cache[command]
+        
         try:
             # Try using shutil.which first (more reliable)
             import shutil
             if shutil.which(command):
-                self._dependencies[command] = DependencyStatus.INSTALLED
-                return DependencyStatus.INSTALLED
+                status = DependencyStatus.INSTALLED
+                self._dependency_cache[command] = status
+                self._dependencies[command] = status
+                return status
             
             # Fallback to which command
             result = subprocess.run(
@@ -179,11 +187,13 @@ class SystemChecker:
                 timeout=5
             )
             if result.returncode == 0:
-                self._dependencies[command] = DependencyStatus.INSTALLED
-                return DependencyStatus.INSTALLED
+                status = DependencyStatus.INSTALLED
             else:
-                self._dependencies[command] = DependencyStatus.NOT_INSTALLED
-                return DependencyStatus.NOT_INSTALLED
+                status = DependencyStatus.NOT_INSTALLED
+            
+            self._dependency_cache[command] = status
+            self._dependencies[command] = status
+            return status
         except (FileNotFoundError, subprocess.TimeoutExpired, subprocess.SubprocessError) as e:
             self._errors.append(f"Error checking dependency '{command}': {e}")
             self._dependencies[command] = DependencyStatus.ERROR

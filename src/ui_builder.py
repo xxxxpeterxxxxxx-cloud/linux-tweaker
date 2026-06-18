@@ -123,7 +123,7 @@ class UIBuilder:
         Args:
             title: Header title.
         """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and self.console:
             header = Panel(
                 Text(title, style="bold cyan"),
                 border_style="cyan",
@@ -142,7 +142,7 @@ class UIBuilder:
         Args:
             menu: Menu to display.
         """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and self.console:
             # Create table for menu items
             table = Table(title=menu.title, show_header=False)
             table.add_column("Option", style="cyan", width=8)
@@ -178,7 +178,7 @@ class UIBuilder:
         if not self._status_messages:
             return
         
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and self.console:
             status_text = "\n".join(self._status_messages)
             status_panel = Panel(
                 status_text,
@@ -198,7 +198,7 @@ class UIBuilder:
         if not self._errors:
             return
         
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and self.console:
             error_text = "\n".join(self._errors)
             error_panel = Panel(
                 error_text,
@@ -224,7 +224,7 @@ class UIBuilder:
             Optional[int]: Selected option number, or None for quit.
         """
         try:
-            if RICH_AVAILABLE:
+            if RICH_AVAILABLE and self.console:
                 choice = self.console.input(
                     "\n[cyan]Choose an option[/cyan] [cyan][0-{}][/cyan][cyan]/q[/cyan]: "
                     .format(len(menu.items))
@@ -317,7 +317,7 @@ class UIBuilder:
         
         while self.current_menu:
             # Clear screen
-            if RICH_AVAILABLE:
+            if RICH_AVAILABLE and self.console:
                 self.console.clear()
             else:
                 print("\n" * 50)
@@ -356,7 +356,7 @@ class UIBuilder:
                 self.print_errors()
                 
                 # Wait for user to continue
-                if RICH_AVAILABLE:
+                if RICH_AVAILABLE and self.console:
                     self.console.input("\nPress Enter to continue...")
                 else:
                     input("\nPress Enter to continue...")
@@ -368,7 +368,7 @@ class UIBuilder:
         Args:
             message: Message to print.
         """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and self.console:
             self.console.print(f"[cyan]{message}[/cyan]")
         else:
             print(message)
@@ -380,7 +380,7 @@ class UIBuilder:
         Args:
             message: Message to print.
         """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and self.console:
             self.console.print(f"[green]✓ {message}[/green]")
         else:
             print(f"✓ {message}")
@@ -392,7 +392,7 @@ class UIBuilder:
         Args:
             message: Message to print.
         """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and self.console:
             self.console.print(f"[yellow]⚠ {message}[/yellow]")
         else:
             print(f"⚠ {message}")
@@ -404,7 +404,7 @@ class UIBuilder:
         Args:
             message: Message to print.
         """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and self.console:
             self.console.print(f"[red]✗ {message}[/red]")
         else:
             print(f"✗ {message}")
@@ -420,7 +420,7 @@ class UIBuilder:
             bool: True if user confirms, False otherwise.
         """
         try:
-            if RICH_AVAILABLE:
+            if RICH_AVAILABLE and self.console:
                 choice = self.console.input(f"[yellow]{message} [y/N]:[/yellow] ")
             else:
                 choice = input(f"{message} [y/N]: ")
@@ -445,7 +445,7 @@ class UIBuilder:
             str: User input or default.
         """
         try:
-            if RICH_AVAILABLE:
+            if RICH_AVAILABLE and self.console:
                 if default:
                     prompt = f"[cyan]{message}[/cyan] [cyan][{default}][/cyan]: "
                 else:

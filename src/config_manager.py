@@ -67,6 +67,14 @@ class ConfigManager:
             ConfigStatus: Status of the download.
         """
         try:
+            from urllib.parse import urlparse, unquote
+            
+            # Validate URL
+            parsed = urlparse(url)
+            if not parsed.scheme or not parsed.netloc:
+                self._errors.append(f"Invalid URL: {url}")
+                return ConfigStatus.FAILED
+            
             dest = Path(dest)
             dest.parent.mkdir(parents=True, exist_ok=True)
             
@@ -103,12 +111,20 @@ class ConfigManager:
             ConfigStatus: Status of the clone operation.
         """
         try:
+            from urllib.parse import urlparse
+            
             dest = Path(dest)
             
-            # Check if git is available
-            import shutil
-            if not shutil.which("git"):
-                self._errors.append("Git is not available")
+            # Validate git URL
+            parsed = urlparse(repo_url)
+            if not parsed.scheme or not parsed.netloc:
+                self._errors.append(f"Invalid git repository URL: {repo_url}")
+                return ConfigStatus.FAILED
+            
+            # Only allow git://, https://, git@ schemes
+            allowed_schemes = ['git', 'https', 'ssh', 'git+ssh']
+            if parsed.scheme not in allowed_schemes:
+                self._errors.append(f"Unsupported git URL scheme: {parsed.scheme}")
                 return ConfigStatus.FAILED
             
             # Clone repository
@@ -235,11 +251,24 @@ class ConfigManager:
             ConfigStatus: Status of the application.
         """
         try:
+            from urllib.parse import urlparse, unquote
+            
+            # Validate URL
+            parsed = urlparse(wallpaper_url)
+            if not parsed.scheme or not parsed.netloc:
+                self._errors.append(f"Invalid wallpaper URL: {wallpaper_url}")
+                return ConfigStatus.FAILED
+            
             # Download wallpaper
             wallpaper_dir = Path.home() / ".config" / "linux-tweaker" / "wallpapers"
             wallpaper_dir.mkdir(parents=True, exist_ok=True)
             
-            filename = wallpaper_url.split("/")[-1]
+            # Safe filename extraction
+            filename = unquote(parsed.path.split("/")[-1])
+            if not filename or filename.startswith(".") or "/" in filename or "\\" in filename:
+                self._errors.append(f"Invalid filename in wallpaper URL: {wallpaper_url}")
+                return ConfigStatus.FAILED
+            
             wallpaper_path = wallpaper_dir / filename
             
             download_status = self.download_file(wallpaper_url, wallpaper_path)
@@ -285,8 +314,20 @@ class ConfigManager:
             
             for script in install_scripts:
                 if script.exists():
+                    # Validate script is within dotfiles directory (security)
+                    try:
+                        script.resolve().relative_to(dotfiles_dir.resolve())
+                    except ValueError:
+                        self._errors.append(f"Script outside dotfiles directory: {script}")
+                        return ConfigStatus.FAILED
+                    
                     # Make executable and run
-                    script.chmod(0o755)
+                    try:
+                        script.chmod(0o755)
+                    except (PermissionError, OSError) as e:
+                        self._errors.append(f"Failed to make script executable: {e}")
+                        return ConfigStatus.FAILED
+                    
                     result = subprocess.run(
                         [str(script)],
                         capture_output=True,

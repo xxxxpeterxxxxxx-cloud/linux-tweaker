@@ -1,31 +1,19 @@
-# Linux Tweaker
+# Linux Tweaker v2.0.0
 
-One command to rice your Linux desktop. 7 themes for Hyprland, Sway, i3, GNOME, KDE, XFCE.
+A robust, secure Linux desktop configuration tool with zero-crash policy and comprehensive error handling.
 
 ## Features
 
-- **7 Pre-built Themes** — Glassmorphism, Cyberpunk, Retro Pixel, and more
-- **Multi-DE Support** — Hyprland, Sway, i3, GNOME, KDE Plasma, XFCE, MATE
-- **Auto-Backup** — Always backs up your config before applying changes
-- **Interactive TUI** — Rich terminal UI for easy navigation
-- **CLI Mode** — Full command-line control for automation
-- **Health Check** — Verify all dependencies are installed
+- **3 Preset Types** — GNOME-quality Hyprland, Minimal Hyprland, Productivity-focused Hyprland
+- **Auto-Backup** — Always backs up your config before applying changes with timestamps
+- **Interactive TUI** — Rich terminal UI powered by rich library for easy navigation
+- **Zero-Crash Policy** — All operations wrapped in try/except blocks for graceful error handling
+- **Security Hardened** — Path traversal protection, URL validation, secure file permissions
+- **Partial Failure Recovery** — Continues operation even if some steps fail
 - **No Root Required** — Works on immutable systems like Fedora Silverblue
+- **Comprehensive Testing** — 14 automated tests (8 integration + 6 unit)
 
 ## Install
-
-### One-Command Install (Recommended)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/xxxxpeterxxxxxx-cloud/linux-tweaker/main/install.sh | bash
-```
-
-This will:
-- Clone the repository to `~/.local/share/linux-tweaker`
-- Install Python dependencies (rich, etc.)
-- Create `linux-tweaker` and `tweak` commands in `~/.local/bin`
-- Add `~/.local/bin` to your PATH
-- Fix rofi usability (adds shell function)
 
 ### Manual Install
 
@@ -35,203 +23,102 @@ cd linux-tweaker
 pip install --user -r requirements.txt
 
 # Run directly
-python3 main.py
-
-# Or create wrapper commands (optional)
-echo '#!/usr/bin/env bash' > ~/.local/bin/linux-tweaker
-echo "exec python3 $(pwd)/main.py \"\$@\"" >> ~/.local/bin/linux-tweaker
-chmod +x ~/.local/bin/linux-tweaker
-ln -sf ~/.local/bin/linux-tweaker ~/.local/bin/tweak
-
-# Add ~/.local/bin to PATH if not already there
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+python3 app.py
 ```
+
+### Requirements
+
+- Python 3.8+
+- rich (pip install rich)
+- git, curl
+- Flatpak (for app installation)
+- Hyprland (for config application)
 
 ## Usage
 
-### Interactive Mode (Recommended for First-Time Users)
+### Interactive Mode
 
 ```bash
-python3 main.py
+python3 app.py
 ```
 
-Launches a beautiful TUI with:
-- Preset browser with descriptions
-- Hardware monitoring (CPU, battery, zRAM)
-- Power profile tuning
+Launches a TUI with:
+- System status display
+- Preset application menu
 - Backup management
 - System health check
-- Config reset
 
-### CLI Commands
-
-```bash
-# List all available themes
-linux-tweaker --list
-
-# Apply a theme interactively
-linux-tweaker --apply "Blue Dream"
-
-# Force a specific desktop environment
-linux-tweaker --apply "Cyberpunk" --force-de hyprland
-
-# Preview a theme without applying
-linux-tweaker --preview "Blue Dream"
-
-# Restore a backup
-linux-tweaker --restore 20260617_123456
-linux-tweaker --restore latest  # Restore most recent backup
-
-# List all backups
-linux-tweaker --list-backups
-
-# Check system health and dependencies
-linux-tweaker --doctor
-
-# Show hardware monitoring
-linux-tweaker --monitor
-
-# Auto-tune power profile
-linux-tweaker --tune
-
-# Show version
-linux-tweaker --version
-```
-
-### Short Alias
-
-After installation, use the shorter `tweak` command:
+### Running Tests
 
 ```bash
-tweak --list
-tweak --apply "Blue Dream"
-tweak --doctor
+# Run integration tests
+python3 test_app.py
+
+# Run unit tests
+python3 test_unit.py
+
+# Run all tests
+python3 test_app.py && python3 test_unit.py
 ```
 
-## Themes
+## Presets
 
-| Theme | Style | Best For |
-|-------|-------|----------|
-| Blue Dream | Glassmorphism, blue accent | Daily use, clean look |
-| Cyberpunk | Neon, matrix rain | Gaming, dark aesthetic |
-| Retro Pixel | Pink/purple, pixel art | Retro gaming vibes |
-| Lime Glass | Green glassmorphism | Nature-inspired setups |
-| Purple Elegance | Deep purple glass | Creative work |
-| Violet Nights | Violet high contrast | Low-light environments |
-| Nordic Productivity | Clean nordic | Minimalist productivity |
+| Preset | Description | Best For |
+|--------|-------------|----------|
+| GNOME-quality Hyprland | Full-featured with essential apps | Daily use, complete setup |
+| Minimal Hyprland | Bare essentials only | Minimalist setups |
+| Productivity Hyprland | Productivity-focused apps and configs | Work environments |
 
-## What Each Theme Does
+## What Each Preset Does
 
-### Hyprland / Sway / i3
-- Generates optimized config with animations and blur
-- Configures Waybar with glassmorphism CSS
-- Sets up Rofi app launcher with matching theme
-- Applies wallpaper via swww/hyprpaper/feh
-- Configures GTK theme and icons
+### Apps (Optional)
+- Installs Flatpak applications for communication, productivity, media, utilities
+- Includes Firefox, LibreOffice, Discord, Telegram, MPV, GIMP, Inkscape, Blender, etc.
 
-### GNOME
-- Installs GNOME Shell extensions
-- Configures gsettings for theme, fonts, layout
-- Sets wallpaper and cursor theme
-- Applies GTK theme and icon pack
-
-### KDE Plasma
-- Configures via kwriteconfig6
-- Sets global theme, colors, fonts
-- Applies wallpaper and icon theme
-- Tweaks window decoration effects
-
-### XFCE / MATE
-- Uses xfconf-query for theming
-- Sets GTK theme, icon theme, fonts
-- Configures window manager settings
-- Applies wallpaper
+### Configs
+- **Hyprland**: Optimized config with animations and blur
+- **Waybar**: Glassmorphism CSS with modules
+- **Rofi**: App launcher with Catppuccin theme
+- **Wallpapers**: Downloads and applies wallpapers
 
 ## Backup & Restore
 
-Every theme application automatically creates a backup with timestamp. Backups are stored in `~/.config/linux-tweaker/backups/`.
+Every preset application automatically creates a backup with timestamp. Backups are stored in `~/.config/linux-tweaker/backups/`.
 
-```bash
-# List all backups
-linux-tweaker --list-backups
+The backup system includes:
+- Timestamped backups (format: `filename_YYYYMMDD_HHMMSS`)
+- Backup history tracking
+- One-click restore functionality
+- Secure file permissions
 
-# Restore specific backup
-linux-tweaker --restore 20260617_123456
+## Architecture
 
-# Restore latest backup
-linux-tweaker --restore latest
-```
+Linux Tweaker v2.0.0 is built with a modular architecture:
 
-## Health Check
-
-Verify all dependencies are installed for your desktop environment:
-
-```bash
-linux-tweaker --doctor
-```
-
-Checks for:
-- Python 3.8+
-- git, curl, pip3
-- DE-specific tools (gsettings, kwriteconfig6, xfconf-query, hyprctl, etc.)
-
-## Requirements
-
-### Base Requirements
-- Python 3.8+
-- git
-- curl
-- pip3 (optional, for Python dependencies)
-
-### Desktop-Specific
-- **Hyprland**: hyprctl, swww, waybar, rofi
-- **Sway/i3**: sway/i3, waybar, rofi, feh
-- **GNOME**: gsettings
-- **KDE Plasma**: kwriteconfig6
-- **XFCE/MATE**: xfconf-query
-
-**No root required.** Works on immutable systems like Fedora Silverblue.
+- **SystemChecker**: Validates system dependencies and window manager
+- **FileManager**: Handles file operations with automatic backup
+- **UIBuilder**: Provides rich TUI interface
+- **PackageManager**: Manages Flatpak, AppImage, and local binary installations
+- **ConfigManager**: Applies Hyprland, Waybar, Rofi, and wallpaper configurations
+- **PresetApplicationManager**: Coordinates app and config application
 
 ## Troubleshooting
 
-### "python3: command not found"
-Install Python 3.8+:
-```bash
-# Fedora
-sudo dnf install python3
+### Tests fail
+- Ensure all dependencies are installed: `pip install rich`
+- Check Python version: `python3 --version` (requires 3.8+)
+- Run tests individually to identify issues
 
-# Ubuntu/Debian
-sudo apt install python3
+### Config application fails
+- Check if running on Hyprland (configs are Hyprland-specific)
+- Verify write permissions: `~/.config/hypr/` and `~/.config/waybar/`
+- Check backup directory: `~/.config/linux-tweaker/backups/`
+- Review error messages in test output
 
-# Arch
-sudo pacman -S python
-```
-
-### "pip3: command not found"
-Install pip:
-```bash
-# Fedora
-sudo dnf install python3-pip
-
-# Ubuntu/Debian
-sudo apt install python3-pip
-
-# Arch
-sudo pacman -S python-pip
-```
-
-### Theme doesn't apply correctly
-1. Run `linux-tweaker --doctor` to check dependencies
-2. Restore backup: `linux-tweaker --restore latest`
-3. Check logs with `linux-tweaker --verbose --apply "Theme"`
-
-### Rofi shows "unsure what to do"
-The installer automatically fixes this by adding a shell function. If you still see it:
-```bash
-# Add this to your ~/.bashrc or ~/.zshrc
-rofi() { if [ $# -eq 0 ]; then command rofi -show drun; else command rofi "$@"; fi }
-```
+### Flatpak installation fails
+- Verify Flatpak is installed: `flatpak --version`
+- Check Flatpak is properly configured: `flatpak remotes`
+- Ensure sufficient disk space (100MB+ required)
 
 ## Development
 
@@ -243,12 +130,24 @@ cd linux-tweaker
 # Install dependencies
 pip install -r requirements.txt
 
-# Run directly
-python3 main.py
+# Run the application
+python3 app.py
 
 # Run tests
-python3 -m pytest tests/
+python3 test_app.py
+python3 test_unit.py
 ```
+
+## Security
+
+Linux Tweaker v2.0.0 includes security hardening:
+- Path traversal protection in all file operations
+- URL validation for downloads
+- Git URL scheme validation (git, https, ssh only)
+- Script execution validation (only within dotfiles directory)
+- Secure file permissions (0o600 for files, 0o700 for directories)
+- File size limits (100MB max)
+- Input validation for all public methods
 
 ## License
 

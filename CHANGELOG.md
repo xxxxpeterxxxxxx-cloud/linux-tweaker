@@ -12,23 +12,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SystemChecker class for robust system validation (write permissions, WM detection, dependency checking)
 - FileManager class with automatic backup/restore functionality
 - UIBuilder class for beautiful TUI menu system with rich library integration
+- PackageManager class for Flatpak, AppImage, and local binary installations
+- ConfigManager class for Hyprland, Waybar, Rofi, and wallpaper configurations
+- PresetApplicationManager class for coordinating preset application
 - Zero-crash policy with try/except blocks on all operations
 - User-space only operations (no sudo/root required)
 - Hierarchical menu system with navigation support
 - Error collection and graceful error reporting
 - Backup history tracking and management
 - Interactive CLI with confirmation dialogs
+- Comprehensive test suite (8 integration tests + 6 unit tests)
+- Security hardening with path traversal protection
+- URL validation for all downloads
+- Git URL scheme validation (git, https, ssh only)
+- Script execution validation (only within dotfiles directory)
+- Secure file permissions (0o600 for files, 0o700 for directories)
+- File size limits (100MB max)
+- Disk space checks before downloads
+- Encoding error handling (UTF-8)
+- Magic numbers replaced with named constants
+- Partial failure recovery (continues if < 3 errors)
+- Progress tracking for preset application
+- Input validation for all public methods
 
 ### Changed
-- Migrated from monolithic main.py to modular architecture (SystemChecker, FileManager, UIBuilder)
+- Migrated from monolithic main.py to modular architecture (SystemChecker, FileManager, UIBuilder, PackageManager, ConfigManager, PresetApplicationManager)
 - Improved error handling throughout the application
 - Enhanced dependency checking with shutil.which fallback
 - Better separation of concerns between system checks, file operations, and UI
+- Fixed invalid Flatpak IDs (discord → com.discordapp.Discord)
+- Replaced hardcoded user paths with Path.home()
+- Fixed window manager detection logic (only checks specific WM names in XDG_CURRENT_DESKTOP)
+- Added None reference checks in UIBuilder for console
+- Fixed IndexError risk in FileManager backup restoration
 
 ### Fixed
 - Module import issues with proper path handling
 - Dependency status display with enum comparison
 - File operations now properly handle all edge cases
+- Path traversal vulnerabilities in package_manager.py and config_manager.py
+- None reference issues in ui_builder.py
+- Logic errors in system_checker.py window manager detection
+- Encoding errors in file_manager.py
+- Missing chmod error handling in config_manager.py
+
+### Security
+- Path traversal protection in all file operations
+- URL validation for downloads (scheme and netloc required)
+- Git URL scheme validation (only git, https, ssh allowed)
+- Script execution validation (only within dotfiles directory)
+- Secure file permissions (0o600 for files, 0o700 for directories)
+- File size limits (100MB max)
+- Disk space checks (100MB minimum)
+- Input validation for all public methods
+
+### Documentation
+- Updated README.md with v2.0.0 features and architecture
+- Created ARCHITECTURE.md with detailed module documentation
+- Updated CHANGELOG.md with security and robustness improvements
 
 ### Removed
 - Legacy monolithic code structure (replaced with modular classes)
